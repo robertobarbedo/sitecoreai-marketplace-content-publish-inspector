@@ -280,7 +280,7 @@ function WebsiteNodeItem({
       case "no-meta":
         return (
           <span style={{ fontSize: "11px", color: "#bbb", marginLeft: "4px" }}>
-            not found
+            &nbsp;
           </span>
         );
       case "all-same":
