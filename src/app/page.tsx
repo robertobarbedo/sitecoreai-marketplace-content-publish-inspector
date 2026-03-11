@@ -49,7 +49,7 @@ function App() {
 
   useEffect(() => {
     if (!error && isInitialized && client) {
-      console.log("Marketplace client initialized successfully.", client);
+      console.log("Marketplace client initialized successfully.");
 
       client.query("application.context")
         .then((res) => {
