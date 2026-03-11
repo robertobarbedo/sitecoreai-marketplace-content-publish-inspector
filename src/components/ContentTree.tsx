@@ -562,7 +562,7 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
 
       setExpandedIds((prev) => new Set(prev).add(node.itemId));
     },
-    [expandedIds, fetchChildren]
+    [expandedIds, fetchChildren, updateNodeChildren]
   );
 
   const handleOpenItem = useCallback(

@@ -11,9 +11,9 @@
     "@sitecore-marketplace-sdk/client": "^0.2.0",
     "@sitecore-marketplace-sdk/xmc": "^0.2.0",
     "lucide-react": "^0.577.0",
-    "next": "^15.4.6",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "next": "^16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "@types/node": "^24.2.0",

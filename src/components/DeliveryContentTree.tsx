@@ -389,7 +389,7 @@ export function DeliveryContentTree({
     return () => {
       cancelled = true;
     };
-  }, [authoringTree, fetchDeliveryItem, onDeliveryTreeUpdate]);
+  }, [authoringTree, fetchDeliveryItem, language, onDeliveryTreeUpdate]);
 
   return (
     <div
