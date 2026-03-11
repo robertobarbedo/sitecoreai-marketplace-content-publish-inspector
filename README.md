@@ -32,3 +32,41 @@ All columns are synchronized for scrolling and hover interactions, making it eas
 
 ## Setup
 
+### Prerequisites
+
+- Access to SitecoreAI Portal
+- XM Cloud environment
+
+### Installation Steps
+
+#### 1. Create the App in SitecoreAI Portal
+
+1. Navigate to **SitecoreAI Portal** > **App Studio** > **Create App**
+2. Configure the new app with the following settings:
+   - **App Name**: `Content Publish Inspector`
+   - **Type**: `Custom`
+
+#### 2. Configure App Settings
+
+In the app configuration page, set the following options:
+
+- **Extension Points**: Enable `Full Screen`
+- **API Access**: Select `SitecoreAI APIs`
+- **Permissions**: `Copy and Read from Clipboard`
+- **Deployment URL**: `https://content-publish-inspector.vercel.app/`
+- **App Logo**: 
+  1. Download the icon from: `https://content-publish-inspector.vercel.app/icon.png`
+  2. Upload it to the Sitecore app configuration
+
+**Save** your new app configuration.
+
+#### 3. Install the App
+
+1. Go back to **SitecoreAI Portal** > **My apps**
+2. Find **Content Publish Inspector** in the list
+3. Click **Install**
+
+#### 4. Access the App
+
+Full Screen Marketplace apps are available in the environment portal in the **right top corner** menu.
+
