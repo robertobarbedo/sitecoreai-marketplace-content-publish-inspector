@@ -265,18 +265,7 @@ function WebsiteNodeItem({
           </span>
         );
       case "http-error":
-        return (
-          <span
-            style={{
-              fontSize: "11px",
-              color: COLOR_ERROR,
-              marginLeft: "4px",
-              fontWeight: 600,
-            }}
-          >
-            {display.httpStatus || "error"}
-          </span>
-        );
+        return null;
       case "no-meta":
         return (
           <span style={{ fontSize: "11px", color: "#bbb", marginLeft: "4px" }}>
@@ -362,6 +351,24 @@ function WebsiteNodeItem({
         >
           {node.name}
         </span>
+        {display.state === "http-error" && display.httpStatus && (
+          <span
+            style={{
+              marginLeft: "6px",
+              padding: "1px 6px",
+              fontSize: "11px",
+              fontWeight: 500,
+              backgroundColor: "#fff",
+              border: `1px solid rgb(208, 208, 208)`,
+              color: "rgb(176, 176, 176)",
+              borderRadius: "3px",
+              flexShrink: 0,
+              lineHeight: "1.4",
+            }}
+          >
+            {display.httpStatus}
+          </span>
+        )}
         {getAnnotation()}
         {localHovered && display.url && !isNotInSite && (
           <a
