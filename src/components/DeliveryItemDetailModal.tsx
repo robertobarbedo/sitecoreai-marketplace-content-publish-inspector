@@ -331,7 +331,10 @@ export function DeliveryItemDetailModal({
     setLayoutError(null);
 
     try {
-      const routePath = itemDetail?.url?.path || "/";
+      let routePath = itemDetail?.url?.path || "/";
+      if (routePath.startsWith(`/${layoutLanguage}`)) {
+        routePath = routePath.substring(layoutLanguage.length + 1);
+      }
 
       const response = await client.mutate(endpoint, {
         params: {
@@ -630,12 +633,13 @@ export function DeliveryItemDetailModal({
                     type="text"
                     value={layoutLanguage}
                     onChange={(e) => setLayoutLanguage(e.target.value)}
+                    disabled={true}
                     style={{
                       fontSize: "12px",
                       padding: "0px 8px",
                       border: "1px solid #d0d0d0",
                       borderRadius: "4px",
-                      color: "#222",
+                      color: "#aaa",
                       height: "26px",
                       width: "80px",
                     }}
