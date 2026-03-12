@@ -443,9 +443,12 @@ export function WebsiteTree({
     settingsRef.current = loaded;
   }, [appContext?.id, appContext?.installationId]);
 
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   const handleRefresh = useCallback(() => {
     processedUrlsRef.current.clear();
     setFetchResults(new Map());
+    setRefreshTrigger((prev) => prev + 1);
   }, []);
 
   const getSitecoreContextId = useCallback(() => {
@@ -579,7 +582,7 @@ export function WebsiteTree({
     }
 
     walk(authoringTree);
-  }, [authoringTree, liveTree, sites, liveMap]);
+  }, [authoringTree, liveTree, sites, liveMap, refreshTrigger]);
 
   const hasData = authoringTree && sites.length > 0;
 
