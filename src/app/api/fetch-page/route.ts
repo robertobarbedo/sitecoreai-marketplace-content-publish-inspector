@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     const response = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; SitecoreChecker/1.0)" },
-      redirect: "follow",
+      redirect: "manual",
       signal: controller.signal,
     });
 
