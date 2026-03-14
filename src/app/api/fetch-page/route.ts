@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
 
   const source = request.nextUrl.searchParams.get("source") || "meta";
   const name = request.nextUrl.searchParams.get("name") || "Last-Modified";
+  const followRedirect = request.nextUrl.searchParams.get("followRedirect") === "true";
 
   try {
     const controller = new AbortController();
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
 
     const response = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; SitecoreChecker/1.0)" },
-      redirect: "manual",
+      redirect: followRedirect ? "follow" : "manual",
       signal: controller.signal,
     });
 

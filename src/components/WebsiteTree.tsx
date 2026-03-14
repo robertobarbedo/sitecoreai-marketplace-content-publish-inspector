@@ -25,9 +25,14 @@ const getSettingsKey = (appContext?: ApplicationContext) => {
 interface UpdatedSourceSettings {
   source: "header" | "meta";
   name: string;
+  trailingSlash: "as-is" | "add" | "remove";
 }
 
-const DEFAULT_SETTINGS: UpdatedSourceSettings = { source: "meta", name: "Last-Modified" };
+const DEFAULT_SETTINGS: UpdatedSourceSettings = { 
+  source: "meta", 
+  name: "Last-Modified",
+  trailingSlash: "as-is"
+};
 
 function loadSettings(appContext?: ApplicationContext): UpdatedSourceSettings {
   try {
@@ -35,7 +40,13 @@ function loadSettings(appContext?: ApplicationContext): UpdatedSourceSettings {
     if (raw) {
       const parsed = JSON.parse(raw);
       if ((parsed.source === "header" || parsed.source === "meta") && typeof parsed.name === "string") {
-        return parsed;
+        return {
+          source: parsed.source,
+          name: parsed.name,
+          trailingSlash: parsed.trailingSlash === "add" || parsed.trailingSlash === "remove" 
+            ? parsed.trailingSlash 
+            : "as-is"
+        };
       }
     }
   } catch { /* ignore */ }
@@ -60,6 +71,34 @@ function formatUpdated(raw?: string | null): string {
   return date.toISOString().replace("T", " ").slice(0, 19);
 }
 
+function applyTrailingSlash(url: string, setting: "as-is" | "add" | "remove"): string {
+  if (setting === "as-is") return url;
+  
+  try {
+    const urlObj = new URL(url);
+    const hasTrailingSlash = urlObj.pathname.endsWith('/');
+    const hasExtension = /\.[^/.]+$/.test(urlObj.pathname);
+    
+    if (hasExtension) {
+      return url;
+    }
+    
+    if (setting === "add" && !hasTrailingSlash) {
+      urlObj.pathname += '/';
+      return urlObj.toString();
+    }
+    
+    if (setting === "remove" && hasTrailingSlash && urlObj.pathname !== '/') {
+      urlObj.pathname = urlObj.pathname.slice(0, -1);
+      return urlObj.toString();
+    }
+    
+    return url;
+  } catch {
+    return url;
+  }
+}
+
 interface SiteInfo {
   name: string;
   rootPath: string;
@@ -75,6 +114,7 @@ type DisplayState =
   | "not-in-site"
   | "no-url"
   | "loading"
+  | "http-redirect"
   | "http-error"
   | "no-meta"
   | "all-same"
@@ -82,6 +122,7 @@ type DisplayState =
   | "outdated-live";
 
 const COLOR_ERROR = "#e57373";
+const COLOR_REDIRECT = "#999";
 const COLOR_OUTDATED_PREVIEW = "#f57c00";
 const COLOR_OUTDATED_LIVE = "#e65100";
 
@@ -158,7 +199,15 @@ function resolveDisplayState(
     return { state: "loading", url };
   }
 
-  if (fetchResult.httpStatus < 200 || fetchResult.httpStatus >= 300) {
+  if (fetchResult.httpStatus >= 300 && fetchResult.httpStatus < 400) {
+    return {
+      state: "http-redirect",
+      httpStatus: fetchResult.httpStatus,
+      url,
+    };
+  }
+
+  if (fetchResult.httpStatus < 200 || fetchResult.httpStatus >= 400) {
     return {
       state: "http-error",
       httpStatus: fetchResult.httpStatus,
@@ -220,6 +269,8 @@ function WebsiteNodeItem({
 
   const getTextColor = (): string | undefined => {
     switch (display.state) {
+      case "http-redirect":
+        return COLOR_REDIRECT;
       case "http-error":
         return COLOR_ERROR;
       case "outdated-preview":
@@ -238,6 +289,10 @@ function WebsiteNodeItem({
         return <Icon path={mdiFileOutline} size={16} color="#ccc" />;
       case "loading":
         return <Icon path={mdiAutorenew} size={16} color="#999" spin />;
+      case "http-redirect":
+        return (
+          <Icon path={mdiWeb} size={16} color={COLOR_REDIRECT} />
+        );
       case "http-error":
         return (
           <Icon path={mdiAlertCircleOutline} size={16} color={COLOR_ERROR} />
@@ -264,6 +319,7 @@ function WebsiteNodeItem({
             loading…
           </span>
         );
+      case "http-redirect":
       case "http-error":
         return null;
       case "no-meta":
@@ -351,7 +407,7 @@ function WebsiteNodeItem({
         >
           {node.name}
         </span>
-        {display.state === "http-error" && display.httpStatus && (
+        {(display.state === "http-redirect" || display.state === "http-error") && display.httpStatus && (
           <span
             style={{
               marginLeft: "6px",
@@ -555,7 +611,7 @@ export function WebsiteTree({
         const url = liveNode?.url;
         if (url && !processedUrlsRef.current.has(url)) {
           processedUrlsRef.current.add(url);
-          fetchPage(url);
+          fetchPage(url, liveNode?.name || node.name);
         }
       }
       if (node.children) {
@@ -563,11 +619,13 @@ export function WebsiteTree({
       }
     }
 
-    async function fetchPage(url: string) {
+    async function fetchPage(url: string, pageName: string) {
       try {
         const s = settingsRef.current;
+        const adjustedUrl = applyTrailingSlash(url, s.trailingSlash);
+        const isHomePage = pageName.toLowerCase() === "home" || pageName.toLowerCase() === "homepage";
         const res = await fetch(
-          `/api/fetch-page?url=${encodeURIComponent(url)}&source=${s.source}&name=${encodeURIComponent(s.name)}`
+          `/api/fetch-page?url=${encodeURIComponent(adjustedUrl)}&source=${s.source}&name=${encodeURIComponent(s.name)}&followRedirect=${isHomePage}`
         );
         const data = await res.json();
         setFetchResults((prev) =>
@@ -773,7 +831,11 @@ export function WebsiteTree({
                   name="updatedSource"
                   checked={settings.source === "header"}
                   onChange={() => {
-                    const next: UpdatedSourceSettings = { source: "header", name: settings.source === "header" ? settings.name : "Last-Modified" };
+                    const next: UpdatedSourceSettings = { 
+                      ...settings,
+                      source: "header", 
+                      name: settings.source === "header" ? settings.name : "Last-Modified" 
+                    };
                     setSettings(next);
                     settingsRef.current = next;
                     saveSettings(next, appContext);
@@ -788,7 +850,11 @@ export function WebsiteTree({
                   name="updatedSource"
                   checked={settings.source === "meta"}
                   onChange={() => {
-                    const next: UpdatedSourceSettings = { source: "meta", name: settings.source === "meta" ? settings.name : "Last-Modified" };
+                    const next: UpdatedSourceSettings = { 
+                      ...settings,
+                      source: "meta", 
+                      name: settings.source === "meta" ? settings.name : "Last-Modified" 
+                    };
                     setSettings(next);
                     settingsRef.current = next;
                     saveSettings(next, appContext);
@@ -827,6 +893,57 @@ export function WebsiteTree({
                 {settings.source === "header"
                   ? "The HTTP response header to extract the updated timestamp from."
                   : "The <meta> tag name attribute to extract the updated timestamp from."}
+              </div>
+              <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginTop: "20px", marginBottom: "10px" }}>
+                Trailing Slash Handling
+              </div>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
+                <input
+                  type="radio"
+                  name="trailingSlash"
+                  checked={settings.trailingSlash === "as-is"}
+                  onChange={() => {
+                    const next: UpdatedSourceSettings = { ...settings, trailingSlash: "as-is" };
+                    setSettings(next);
+                    settingsRef.current = next;
+                    saveSettings(next, appContext);
+                  }}
+                  style={{ margin: 0 }}
+                />
+                <span>Leave URL as is</span>
+              </label>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
+                <input
+                  type="radio"
+                  name="trailingSlash"
+                  checked={settings.trailingSlash === "add"}
+                  onChange={() => {
+                    const next: UpdatedSourceSettings = { ...settings, trailingSlash: "add" };
+                    setSettings(next);
+                    settingsRef.current = next;
+                    saveSettings(next, appContext);
+                  }}
+                  style={{ margin: 0 }}
+                />
+                <span>Always add trailing slash</span>
+              </label>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
+                <input
+                  type="radio"
+                  name="trailingSlash"
+                  checked={settings.trailingSlash === "remove"}
+                  onChange={() => {
+                    const next: UpdatedSourceSettings = { ...settings, trailingSlash: "remove" };
+                    setSettings(next);
+                    settingsRef.current = next;
+                    saveSettings(next, appContext);
+                  }}
+                  style={{ margin: 0 }}
+                />
+                <span>Always remove trailing slash</span>
+              </label>
+              <div style={{ fontSize: "11px", color: "#aaa", marginTop: "6px" }}>
+                Controls whether URLs should have a trailing slash when fetching pages. Files with extensions are not modified.
               </div>
             </div>
           </div>
