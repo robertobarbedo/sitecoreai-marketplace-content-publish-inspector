@@ -252,7 +252,7 @@ export function DeliveryItemDetailModal({
 
         const parsed = (data as { item?: DeliveryItemDetail })?.item ?? null;
         setItemDetail(parsed);
-      } catch (err) {
+      } catch {
         if (!cancelled) {
           setItemRaw(null);
         }
@@ -317,7 +317,7 @@ export function DeliveryItemDetailModal({
 
     fetchSites();
     return () => { cancelled = true; };
-  }, [activeTab, client, endpoint, getSitecoreContextId]);
+  }, [activeTab, client, endpoint, getSitecoreContextId, node.path]);
 
   const runLayoutQuery = useCallback(async () => {
     const sitecoreContextId = getSitecoreContextId();

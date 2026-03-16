@@ -26,12 +26,16 @@ interface UpdatedSourceSettings {
   source: "header" | "meta";
   name: string;
   trailingSlash: "as-is" | "add" | "remove";
+  followRedirectHomepage: boolean;
+  followRedirectOtherPages: boolean;
 }
 
 const DEFAULT_SETTINGS: UpdatedSourceSettings = { 
   source: "meta", 
   name: "Last-Modified",
-  trailingSlash: "as-is"
+  trailingSlash: "as-is",
+  followRedirectHomepage: true,
+  followRedirectOtherPages: false
 };
 
 function loadSettings(appContext?: ApplicationContext): UpdatedSourceSettings {
@@ -45,7 +49,13 @@ function loadSettings(appContext?: ApplicationContext): UpdatedSourceSettings {
           name: parsed.name,
           trailingSlash: parsed.trailingSlash === "add" || parsed.trailingSlash === "remove" 
             ? parsed.trailingSlash 
-            : "as-is"
+            : "as-is",
+          followRedirectHomepage: typeof parsed.followRedirectHomepage === "boolean" 
+            ? parsed.followRedirectHomepage 
+            : true,
+          followRedirectOtherPages: typeof parsed.followRedirectOtherPages === "boolean" 
+            ? parsed.followRedirectOtherPages 
+            : false
         };
       }
     }
@@ -504,7 +514,7 @@ export function WebsiteTree({
     const loaded = loadSettings(appContext);
     setSettings(loaded);
     settingsRef.current = loaded;
-  }, [appContext?.id, appContext?.installationId]);
+  }, [appContext, appContext.id, appContext.installationId]);
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -624,8 +634,9 @@ export function WebsiteTree({
         const s = settingsRef.current;
         const adjustedUrl = applyTrailingSlash(url, s.trailingSlash);
         const isHomePage = pageName.toLowerCase() === "home" || pageName.toLowerCase() === "homepage";
+        const followRedirect = isHomePage ? s.followRedirectHomepage : s.followRedirectOtherPages;
         const res = await fetch(
-          `/api/fetch-page?url=${encodeURIComponent(adjustedUrl)}&source=${s.source}&name=${encodeURIComponent(s.name)}&followRedirect=${isHomePage}`
+          `/api/fetch-page?url=${encodeURIComponent(adjustedUrl)}&source=${s.source}&name=${encodeURIComponent(s.name)}&followRedirect=${followRedirect}`
         );
         const data = await res.json();
         setFetchResults((prev) =>
@@ -895,7 +906,41 @@ export function WebsiteTree({
                   : "The <meta> tag name attribute to extract the updated timestamp from."}
               </div>
               <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginTop: "20px", marginBottom: "10px" }}>
-                Trailing Slash Handling
+                Redirect Handling
+              </div>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
+                <input
+                  type="checkbox"
+                  checked={settings.followRedirectHomepage}
+                  onChange={(e) => {
+                    const next: UpdatedSourceSettings = { ...settings, followRedirectHomepage: e.target.checked };
+                    setSettings(next);
+                    settingsRef.current = next;
+                    saveSettings(next, appContext);
+                  }}
+                  style={{ margin: 0 }}
+                />
+                <span>Follow redirects for Homepage</span>
+              </label>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
+                <input
+                  type="checkbox"
+                  checked={settings.followRedirectOtherPages}
+                  onChange={(e) => {
+                    const next: UpdatedSourceSettings = { ...settings, followRedirectOtherPages: e.target.checked };
+                    setSettings(next);
+                    settingsRef.current = next;
+                    saveSettings(next, appContext);
+                  }}
+                  style={{ margin: 0 }}
+                />
+                <span>Follow redirects for other pages</span>
+              </label>
+              <div style={{ fontSize: "11px", color: "#aaa", marginTop: "6px" }}>
+                When checked, redirects (3xx) are followed automatically. When unchecked, redirect status codes are shown. Applies to pages named &quot;Home&quot; or &quot;Homepage&quot; vs all other pages.
+              </div>
+              <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginTop: "20px", marginBottom: "10px" }}>
+                Redirects Handling - Trailing Slash
               </div>
               <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
                 <input
@@ -925,7 +970,7 @@ export function WebsiteTree({
                   }}
                   style={{ margin: 0 }}
                 />
-                <span>Always add trailing slash</span>
+                <span>Always add trailing slash to prevent redirects</span>
               </label>
               <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
                 <input
@@ -940,7 +985,7 @@ export function WebsiteTree({
                   }}
                   style={{ margin: 0 }}
                 />
-                <span>Always remove trailing slash</span>
+                <span>Always remove trailing slash to prevent redirects</span>
               </label>
               <div style={{ fontSize: "11px", color: "#aaa", marginTop: "6px" }}>
                 Controls whether URLs should have a trailing slash when fetching pages. Files with extensions are not modified.
