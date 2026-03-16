@@ -107,7 +107,7 @@ function DeliveryNodeItem({
           padding: `3px 4px 3px ${depth * 16 + 4}px`,
           userSelect: "none",
           borderRadius: "3px",
-          fontSize: "13px",
+          fontSize: "var(--font-size-sm)",
           lineHeight: "1.4",
           opacity: node.status === "not-found" ? 0.5 : 1,
           backgroundColor: isHovered ? "#e8f0fe" : "transparent",
@@ -142,22 +142,22 @@ function DeliveryNodeItem({
           {node.name}
         </span>
         {node.status === "found" && node.updated && (
-          <span style={{ fontSize: "11px", color: isOutdated ? "#f57c00" : "#b0b0b0", marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: isOutdated ? "#f57c00" : "#b0b0b0", marginLeft: "6px", flexShrink: 0 }}>
             {formatUpdated(node.updated)}
           </span>
         )}
         {node.status === "loading" && (
-          <span style={{ fontSize: "11px", color: "#999", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "#999", marginLeft: "4px" }}>
             loading…
           </span>
         )}
         {node.status === "not-found" && (
-          <span style={{ fontSize: "11px", color: "#e57373", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "#e57373", marginLeft: "4px" }}>
             not found
           </span>
         )}
         {node.status === "error" && node.errorMessage && (
-          <span style={{ fontSize: "11px", color: "#e57373", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "#e57373", marginLeft: "4px" }}>
             {node.errorMessage}
           </span>
         )}
@@ -170,8 +170,8 @@ function DeliveryNodeItem({
             style={{
               marginLeft: "auto",
               padding: "1px 6px",
-              fontSize: "11px",
-              fontWeight: 500,
+              fontSize: "var(--font-size-2xs)",
+              fontWeight: "var(--font-weight-medium)",
               color: "#444",
               backgroundColor: "#fff",
               border: "1px solid #d0d0d0",
@@ -394,21 +394,20 @@ export function DeliveryContentTree({
   return (
     <div
       style={{
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        fontSize: "13px",
+        fontFamily: "var(--font-body)",
+        fontSize: "var(--font-size-sm)",
       }}
     >
       <div
         style={{
           padding: "6px 12px",
-          fontWeight: 600,
-          fontSize: "12px",
+          fontWeight: "var(--font-weight-semibold)",
+          fontSize: "var(--font-size-xs)",
           textTransform: "uppercase",
           letterSpacing: "0.5px",
           color: "#555",
           borderBottom: "1px solid #e0e0e0",
-          minHeight: "35px",
+          minHeight: "36px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -419,12 +418,12 @@ export function DeliveryContentTree({
       </div>
       <div style={{ padding: "4px 0" }}>
         {error && (
-          <div style={{ color: "red", padding: "8px 12px", fontSize: "12px" }}>
+          <div style={{ color: "red", padding: "8px 12px", fontSize: "var(--font-size-xs)" }}>
             {error}
           </div>
         )}
         {!deliveryTree && !error && (
-          <div style={{ padding: "8px 12px", color: "#999", fontSize: "12px" }}>
+          <div style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}>
             Waiting for content tree…
           </div>
         )}

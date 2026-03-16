@@ -96,7 +96,7 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
           cursor: clickable ? "pointer" : "default",
           userSelect: "none",
           borderRadius: "3px",
-          fontSize: "13px",
+          fontSize: "var(--font-size-sm)",
           lineHeight: "1.4",
           opacity: 1,
           backgroundColor: isExternallyHovered ? "#e8f0fe" : "transparent",
@@ -121,8 +121,9 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
             width: "16px",
             height: "16px",
             flexShrink: 0,
-            fontSize: "10px",
             color: "#666",
+            fontFamily: "Arial, sans-serif",
+            fontSize: "10px",
             transition: "transform 0.15s ease",
             transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
           }}
@@ -155,8 +156,8 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
             style={{
               marginLeft: "6px",
               padding: "1px 6px",
-              fontSize: "11px",
-              fontWeight: 500,
+              fontSize: "var(--font-size-2xs)",
+              fontWeight: "var(--font-weight-medium)",
               color: "#b0b0b0",
               backgroundColor: "#fff",
               border: "1px solid #d0d0d0",
@@ -169,12 +170,12 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
           </span>
         )}
         {node.updated && (
-          <span style={{ fontSize: "11px", color: "#b0b0b0", marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "#b0b0b0", marginLeft: "6px", flexShrink: 0 }}>
             {formatUpdated(node.updated)}
           </span>
         )}
         {loading && (
-          <span style={{ fontSize: "11px", color: "#999", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "#999", marginLeft: "4px" }}>
             loading…
           </span>
         )}
@@ -187,8 +188,8 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
             style={{
               marginLeft: "auto",
               padding: "1px 6px",
-              fontSize: "11px",
-              fontWeight: 500,
+              fontSize: "var(--font-size-2xs)",
+              fontWeight: "var(--font-weight-medium)",
               color: "#444",
               backgroundColor: "#fff",
               border: "1px solid #d0d0d0",
@@ -676,40 +677,40 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
   return (
     <div
       style={{
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        fontSize: "13px",
+        fontFamily: "var(--font-body)",
+        fontSize: "var(--font-size-sm)",
       }}
     >
       <div
         style={{
           padding: "6px 12px",
-          fontWeight: 600,
-          fontSize: "12px",
+          fontWeight: "var(--font-weight-semibold)",
+          fontSize: "var(--font-size-xs)",
           textTransform: "uppercase",
           letterSpacing: "0.5px",
           color: "#555",
           borderBottom: "1px solid #e0e0e0",
           display: "flex",
           flexDirection: "column",
+          minHeight: "36px",
           gap: "0px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", minHeight: "35px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span>Authoring API</span>
           <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
             <select
               value={selectedLanguage}
               onChange={(e) => handleLanguageChange(e.target.value)}
               style={{
-                fontSize: "11px",
+                fontSize: "var(--font-size-2xs)",
                 padding: "2px 4px",
                 border: "1px solid #d0d0d0",
                 borderRadius: "3px",
                 color: "#444",
                 backgroundColor: "#fff",
                 cursor: "pointer",
-                fontWeight: 400,
+                fontWeight: "var(--font-weight-normal)",
                 textTransform: "none",
                 letterSpacing: 0,
                 outline: "none",
@@ -772,13 +773,13 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
                 autoFocus
                 style={{
                   flex: 1,
-                  fontSize: "12px",
+                  fontSize: "var(--font-size-xs)",
                   padding: "4px 8px",
                   border: "1px solid #d0d0d0",
                   borderRadius: "4px",
                   color: "#222",
-                  fontFamily: '"SF Mono", Menlo, Consolas, monospace',
-                  fontWeight: 400,
+                  fontFamily: "var(--font-mono)",
+                  fontWeight: "var(--font-weight-normal)",
                   textTransform: "none",
                   letterSpacing: 0,
                   outline: "none",
@@ -789,8 +790,8 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
               <button
                 onClick={handleSearchSubmit}
                 style={{
-                  fontSize: "11px",
-                  fontWeight: 600,
+                  fontSize: "var(--font-size-2xs)",
+                  fontWeight: "var(--font-weight-semibold)",
                   padding: "0 10px",
                   height: "26px",
                   border: "none",
@@ -809,7 +810,7 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
               </button>
             </div>
             {searchError && (
-              <div style={{ fontSize: "11px", color: "#e57373", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>
+              <div style={{ fontSize: "var(--font-size-2xs)", color: "#e57373", fontWeight: "var(--font-weight-normal)", textTransform: "none", letterSpacing: 0 }}>
                 {searchError}
               </div>
             )}
@@ -818,12 +819,12 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
       </div>
       <div style={{ padding: "4px 0" }}>
         {error && (
-          <div style={{ color: "red", padding: "8px 12px", fontSize: "12px" }}>
+          <div style={{ color: "red", padding: "8px 12px", fontSize: "var(--font-size-xs)" }}>
             {error}
           </div>
         )}
         {!rootNode && !error && (
-          <div style={{ padding: "8px 12px", color: "#999", fontSize: "12px" }}>
+          <div style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}>
             Loading…
           </div>
         )}

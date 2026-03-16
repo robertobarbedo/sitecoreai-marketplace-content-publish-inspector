@@ -325,7 +325,7 @@ function WebsiteNodeItem({
     switch (display.state) {
       case "loading":
         return (
-          <span style={{ fontSize: "11px", color: "#999", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "#999", marginLeft: "4px" }}>
             loading…
           </span>
         );
@@ -334,25 +334,25 @@ function WebsiteNodeItem({
         return null;
       case "no-meta":
         return (
-          <span style={{ fontSize: "11px", color: "#bbb", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "#bbb", marginLeft: "4px" }}>
             &nbsp;
           </span>
         );
       case "all-same":
         return display.websiteUpdated ? (
-          <span style={{ fontSize: "11px", color: "#b0b0b0", marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "#b0b0b0", marginLeft: "6px", flexShrink: 0 }}>
             {formatUpdated(display.websiteUpdated)}
           </span>
         ) : null;
       case "outdated-preview":
         return display.websiteUpdated ? (
-          <span style={{ fontSize: "11px", color: COLOR_OUTDATED_PREVIEW, marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: COLOR_OUTDATED_PREVIEW, marginLeft: "6px", flexShrink: 0 }}>
             {formatUpdated(display.websiteUpdated)}
           </span>
         ) : null;
       case "outdated-live":
         return display.websiteUpdated ? (
-          <span style={{ fontSize: "11px", color: COLOR_OUTDATED_LIVE, marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: COLOR_OUTDATED_LIVE, marginLeft: "6px", flexShrink: 0 }}>
             {formatUpdated(display.websiteUpdated)}
           </span>
         ) : null;
@@ -387,7 +387,7 @@ function WebsiteNodeItem({
           padding: `3px 4px 3px ${depth * 16 + 4}px`,
           userSelect: "none",
           borderRadius: "3px",
-          fontSize: "13px",
+          fontSize: "var(--font-size-sm)",
           lineHeight: "1.4",
           opacity: isNotInSite ? 0.45 : 1,
           backgroundColor: isHovered ? "#e8f0fe" : "transparent",
@@ -422,8 +422,8 @@ function WebsiteNodeItem({
             style={{
               marginLeft: "6px",
               padding: "1px 6px",
-              fontSize: "11px",
-              fontWeight: 500,
+              fontSize: "var(--font-size-2xs)",
+              fontWeight: "var(--font-weight-medium)",
               backgroundColor: "#fff",
               border: `1px solid rgb(208, 208, 208)`,
               color: "rgb(176, 176, 176)",
@@ -445,8 +445,8 @@ function WebsiteNodeItem({
             style={{
               marginLeft: "auto",
               padding: "1px 6px",
-              fontSize: "11px",
-              fontWeight: 500,
+              fontSize: "var(--font-size-2xs)",
+              fontWeight: "var(--font-weight-medium)",
               color: "#444",
               backgroundColor: "#fff",
               border: "1px solid #d0d0d0",
@@ -665,21 +665,20 @@ export function WebsiteTree({
   return (
     <div
       style={{
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        fontSize: "13px",
+        fontFamily: "var(--font-body)",
+        fontSize: "var(--font-size-sm)",
       }}
     >
       <div
         style={{
           padding: "6px 12px",
-          fontWeight: 600,
-          fontSize: "12px",
+          fontWeight: "var(--font-weight-semibold)",
+          fontSize: "var(--font-size-xs)",
           textTransform: "uppercase",
           letterSpacing: "0.5px",
           color: "#555",
           borderBottom: "1px solid #e0e0e0",
-          minHeight: "35px",
+          minHeight: "36px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -714,8 +713,8 @@ export function WebsiteTree({
                 display: "inline-flex",
                 alignItems: "center",
                 padding: "2px 7px",
-                fontSize: "11px",
-                fontWeight: 500,
+                fontSize: "var(--font-size-2xs)",
+                fontWeight: "var(--font-weight-medium)",
                 border: "1px solid #d0d0d0",
                 borderRadius: "3px",
                 backgroundColor: "#fff",
@@ -739,28 +738,28 @@ export function WebsiteTree({
       <div style={{ padding: "4px 0" }}>
         {sitesLoading && (
           <div
-            style={{ padding: "8px 12px", color: "#999", fontSize: "12px" }}
+            style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}
           >
             Loading site information…
           </div>
         )}
         {!sitesLoading && sites.length === 0 && (
           <div
-            style={{ padding: "8px 12px", color: "#999", fontSize: "12px" }}
+            style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}
           >
             No sites found.
           </div>
         )}
         {!authoringTree && sites.length > 0 && (
           <div
-            style={{ padding: "8px 12px", color: "#999", fontSize: "12px" }}
+            style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}
           >
             Waiting for content tree…
           </div>
         )}
         {(!previewTree || !liveTree) && authoringTree && sites.length > 0 && (
           <div
-            style={{ padding: "8px 12px", color: "#999", fontSize: "12px" }}
+            style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}
           >
             Waiting for delivery data…
           </div>
@@ -812,7 +811,7 @@ export function WebsiteTree({
                 borderBottom: "1px solid #e0e0e0",
               }}
             >
-              <span style={{ fontWeight: 700, fontSize: "14px", color: "#111" }}>
+              <span style={{ fontWeight: "var(--font-weight-semibold)", fontSize: "var(--font-size-base)", color: "#111" }}>
                 Website Settings
               </span>
               <span
@@ -832,8 +831,8 @@ export function WebsiteTree({
                 <Icon path={mdiClose} size={18} color="#666" />
               </span>
             </div>
-            <div style={{ padding: "16px 18px", fontSize: "13px", lineHeight: "1.7", color: "#333" }}>
-              <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "10px" }}>
+            <div style={{ padding: "16px 18px", fontSize: "var(--font-size-sm)", lineHeight: "1.7", color: "#333" }}>
+              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "10px" }}>
                 Source for __Updated comparison
               </div>
               <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
@@ -874,7 +873,7 @@ export function WebsiteTree({
                 />
                 <span>Meta Tag</span>
               </label>
-              <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "6px" }}>
+              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "6px" }}>
                 {settings.source === "header" ? "Header Name" : "Meta Tag Name"}
               </div>
               <input
@@ -888,19 +887,19 @@ export function WebsiteTree({
                 }}
                 style={{
                   width: "100%",
-                  fontSize: "12px",
+                  fontSize: "var(--font-size-xs)",
                   padding: "6px 10px",
                   border: "1px solid #d0d0d0",
                   borderRadius: "4px",
                   color: "#222",
-                  fontFamily: '"SF Mono", Menlo, Consolas, monospace',
+                  fontFamily: "var(--font-mono)",
                   outline: "none",
                   boxSizing: "border-box",
                 }}
                 onFocus={(e) => { e.currentTarget.style.borderColor = "#90caf9"; }}
                 onBlur={(e) => { e.currentTarget.style.borderColor = "#d0d0d0"; }}
               />
-              <div style={{ fontSize: "11px", color: "#aaa", marginTop: "6px" }}>
+              <div style={{ fontSize: "var(--font-size-2xs)", color: "#aaa", marginTop: "6px" }}>
                 {settings.source === "header"
                   ? "The HTTP response header to extract the updated timestamp from."
                   : "The <meta> tag name attribute to extract the updated timestamp from."}

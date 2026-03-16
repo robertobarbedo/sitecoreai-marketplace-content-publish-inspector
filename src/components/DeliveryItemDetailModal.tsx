@@ -47,8 +47,8 @@ function MetaRow({ label, value }: { label: string; value: string }) {
       <td
         style={{
           padding: "6px 10px",
-          fontWeight: 600,
-          fontSize: "12px",
+          fontWeight: "var(--font-weight-semibold)",
+          fontSize: "var(--font-size-xs)",
           color: "#555",
           whiteSpace: "nowrap",
           verticalAlign: "top",
@@ -61,10 +61,10 @@ function MetaRow({ label, value }: { label: string; value: string }) {
       <td
         style={{
           padding: "6px 10px",
-          fontSize: "12px",
+          fontSize: "var(--font-size-xs)",
           color: "#222",
           wordBreak: "break-all",
-          fontFamily: '"SF Mono", "Cascadia Code", Menlo, Consolas, monospace',
+          fontFamily: "var(--font-mono)",
           borderBottom: "1px solid #f0f0f0",
         }}
       >
@@ -76,13 +76,13 @@ function MetaRow({ label, value }: { label: string; value: string }) {
 
 function FieldsTable({ fields }: { fields: DeliveryItemField[] }) {
   return (
-    <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", fontSize: "12px" }}>
+    <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", fontSize: "var(--font-size-xs)" }}>
       <thead>
         <tr style={{ backgroundColor: "#f7f8fa" }}>
-          <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: 600, color: "#555", borderBottom: "1px solid #e0e0e0", width: "220px" }}>
+          <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0", width: "220px" }}>
             Field Name
           </th>
-          <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: 600, color: "#555", borderBottom: "1px solid #e0e0e0" }}>
+          <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0" }}>
             Value
           </th>
         </tr>
@@ -94,7 +94,7 @@ function FieldsTable({ fields }: { fields: DeliveryItemField[] }) {
               style={{
                 padding: "6px 10px",
                 verticalAlign: "top",
-                fontWeight: 600,
+                fontWeight: "var(--font-weight-semibold)",
                 color: field.name.startsWith("__") ? "#999" : "#333",
                 fontStyle: field.name.startsWith("__") ? "italic" : "normal",
                 borderBottom: "1px solid #f0f0f0",
@@ -110,8 +110,8 @@ function FieldsTable({ fields }: { fields: DeliveryItemField[] }) {
                 color: field.name.startsWith("__") ? "#888" : "#222",
                 borderBottom: "1px solid #f0f0f0",
                 wordBreak: "break-all",
-                fontFamily: '"SF Mono", Menlo, Consolas, monospace',
-                fontSize: "11px",
+                fontFamily: "var(--font-mono)",
+                fontSize: "var(--font-size-2xs)",
               }}
             >
               {field.value || <span style={{ color: "#bbb", fontStyle: "italic" }}>empty</span>}
@@ -129,11 +129,11 @@ function JsonBlock({ data }: { data: string }) {
       style={{
         margin: 0,
         padding: "16px 18px",
-        fontSize: "12px",
+        fontSize: "var(--font-size-xs)",
         lineHeight: "1.6",
         whiteSpace: "pre-wrap",
         wordBreak: "break-word",
-        fontFamily: '"SF Mono", "Cascadia Code", "Fira Code", Menlo, Consolas, monospace',
+        fontFamily: "var(--font-mono)",
         color: "#333",
       }}
     >
@@ -366,8 +366,8 @@ export function DeliveryItemDetailModal({
 
   const tabStyle = (active: boolean): React.CSSProperties => ({
     padding: "6px 14px",
-    fontSize: "12px",
-    fontWeight: active ? 600 : 400,
+    fontSize: "var(--font-size-xs)",
+    fontWeight: active ? "var(--font-weight-semibold)" : "var(--font-weight-normal)",
     color: active ? "#1976d2" : "#666",
     cursor: "pointer",
     userSelect: "none",
@@ -418,10 +418,10 @@ export function DeliveryItemDetailModal({
           }}
         >
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: "11px", color: "#999", marginBottom: "2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            <div style={{ fontSize: "var(--font-size-2xs)", color: "#999", marginBottom: "2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
               Delivery API — {endpoint === "xmc.live.graphql" ? "Live" : "Preview"}
             </div>
-            <div style={{ fontWeight: 700, fontSize: "15px", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div style={{ fontWeight: "var(--font-weight-semibold)", fontSize: "var(--font-size-lg)", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {node.path}
             </div>
           </div>
@@ -465,10 +465,10 @@ export function DeliveryItemDetailModal({
           {activeTab === "structured" && (
             <>
               {itemLoading && (
-                <div style={{ color: "#999", fontSize: "13px", padding: "16px 18px" }}>Fetching item data…</div>
+                <div style={{ color: "#999", fontSize: "var(--font-size-sm)", padding: "16px 18px" }}>Fetching item data…</div>
               )}
               {!itemLoading && !itemRaw && (
-                <div style={{ color: "#e57373", fontSize: "13px", padding: "16px 18px" }}>Failed to fetch item data.</div>
+                <div style={{ color: "#e57373", fontSize: "var(--font-size-sm)", padding: "16px 18px" }}>Failed to fetch item data.</div>
               )}
               {!itemLoading && itemRaw && !itemDetail && (
                 <JsonBlock data={itemRaw} />
@@ -476,7 +476,7 @@ export function DeliveryItemDetailModal({
               {!itemLoading && itemDetail && (
                 <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: "20px" }}>
                   <section>
-                    <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                    <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
                       Item Properties
                     </div>
                     <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", borderRadius: "6px", overflow: "hidden" }}>
@@ -504,7 +504,7 @@ export function DeliveryItemDetailModal({
 
                   {contentFields.length > 0 && (
                     <section>
-                      <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                      <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
                         Content Fields ({contentFields.length})
                       </div>
                       <FieldsTable fields={contentFields} />
@@ -513,7 +513,7 @@ export function DeliveryItemDetailModal({
 
                   {systemFields.length > 0 && (
                     <section>
-                      <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                      <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
                         System Fields ({systemFields.length})
                       </div>
                       <FieldsTable fields={systemFields} />
@@ -522,23 +522,23 @@ export function DeliveryItemDetailModal({
 
                   {(itemDetail.children?.results?.length ?? 0) > 0 && (
                     <section>
-                      <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                      <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
                         Children ({itemDetail.children!.results!.length})
                       </div>
-                      <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", fontSize: "12px" }}>
+                      <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", fontSize: "var(--font-size-xs)" }}>
                         <thead>
                           <tr style={{ backgroundColor: "#f7f8fa" }}>
-                            <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: 600, color: "#555", borderBottom: "1px solid #e0e0e0", width: "180px" }}>Name</th>
-                            <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: 600, color: "#555", borderBottom: "1px solid #e0e0e0" }}>Path</th>
-                            <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: 600, color: "#555", borderBottom: "1px solid #e0e0e0", width: "290px" }}>ID</th>
+                            <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0", width: "180px" }}>Name</th>
+                            <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0" }}>Path</th>
+                            <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0", width: "290px" }}>ID</th>
                           </tr>
                         </thead>
                         <tbody>
                           {itemDetail.children!.results!.map((child, i) => (
                             <tr key={child.id} style={{ backgroundColor: i % 2 === 0 ? "#fff" : "#fafafa" }}>
-                              <td style={{ padding: "6px 10px", fontWeight: 600, color: "#333", borderBottom: "1px solid #f0f0f0", wordBreak: "break-word" }}>{child.name}</td>
-                              <td style={{ padding: "6px 10px", fontFamily: '"SF Mono", Menlo, Consolas, monospace', fontSize: "11px", color: "#555", borderBottom: "1px solid #f0f0f0", wordBreak: "break-all" }}>{child.path}</td>
-                              <td style={{ padding: "6px 10px", fontFamily: '"SF Mono", Menlo, Consolas, monospace', fontSize: "11px", color: "#888", borderBottom: "1px solid #f0f0f0" }}>{child.id}</td>
+                              <td style={{ padding: "6px 10px", fontWeight: "var(--font-weight-semibold)", color: "#333", borderBottom: "1px solid #f0f0f0", wordBreak: "break-word" }}>{child.name}</td>
+                              <td style={{ padding: "6px 10px", fontFamily: "var(--font-mono)", fontSize: "var(--font-size-2xs)", color: "#555", borderBottom: "1px solid #f0f0f0", wordBreak: "break-all" }}>{child.path}</td>
+                              <td style={{ padding: "6px 10px", fontFamily: "var(--font-mono)", fontSize: "var(--font-size-2xs)", color: "#888", borderBottom: "1px solid #f0f0f0" }}>{child.id}</td>
                             </tr>
                           ))}
                         </tbody>
