@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Icon } from "./Icon";
 import { mdiClose } from "@mdi/js";
 import type { ClientSDK, ApplicationContext } from "@sitecore-marketplace-sdk/client";
+import { getClientRateLimiter } from "../utils/rateLimit";
 
 type DeliveryEndpoint = "xmc.preview.graphql" | "xmc.live.graphql";
 
@@ -238,6 +239,10 @@ export function DeliveryItemDetailModal({
       };
 
       try {
+        // Apply rate limiting
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
         const response = await client.mutate(endpoint, {
           params: {
             query: { sitecoreContextId },
@@ -280,6 +285,10 @@ export function DeliveryItemDetailModal({
       }
 
       try {
+        // Apply rate limiting
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
         const response = await client.mutate(endpoint, {
           params: {
             query: { sitecoreContextId },
@@ -335,6 +344,10 @@ export function DeliveryItemDetailModal({
       if (routePath.startsWith(`/${layoutLanguage}`)) {
         routePath = routePath.substring(layoutLanguage.length + 1);
       }
+
+      // Apply rate limiting
+      const rateLimiter = getClientRateLimiter();
+      await rateLimiter.acquire();
 
       const response = await client.mutate(endpoint, {
         params: {

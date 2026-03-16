@@ -14,6 +14,8 @@ import {
   mdiCogOutline,
   mdiClose,
 } from "@mdi/js";
+import { getClientRateLimiter, configureClientRateLimit } from "../utils/rateLimit";
+import { useAppConfig } from "../utils/hooks/useAppConfig";
 
 const getSettingsKey = (appContext?: ApplicationContext) => {
   if (!appContext?.id || !appContext?.installationId) return "websiteTree_updatedSource";
@@ -506,6 +508,7 @@ export function WebsiteTree({
   hoveredLine,
   onHoverChange,
 }: WebsiteTreeProps) {
+  const config = useAppConfig();
   const [sites, setSites] = useState<SiteInfo[]>([]);
   const [sitesLoading, setSitesLoading] = useState(false);
   const sitesFetchedRef = useRef(false);
@@ -517,6 +520,11 @@ export function WebsiteTree({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<UpdatedSourceSettings>(DEFAULT_SETTINGS);
   const settingsRef = useRef<UpdatedSourceSettings>(DEFAULT_SETTINGS);
+
+  // Configure rate limiter when config changes
+  useEffect(() => {
+    configureClientRateLimit(config.rateLimit);
+  }, [config.rateLimit]);
 
   useEffect(() => {
     const loaded = loadSettings(appContext);
@@ -554,6 +562,10 @@ export function WebsiteTree({
       }
 
       try {
+        // Apply rate limiting
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
         const response = await client.mutate("xmc.preview.graphql", {
           params: {
             query: { sitecoreContextId },
@@ -639,6 +651,10 @@ export function WebsiteTree({
 
     async function fetchPage(url: string, pageName: string) {
       try {
+        // Apply rate limiting for HTTP fetches
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
         const s = settingsRef.current;
         const adjustedUrl = applyTrailingSlash(url, s.trailingSlash);
         const isHomePage = pageName.toLowerCase() === "home" || pageName.toLowerCase() === "homepage";

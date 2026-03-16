@@ -5,6 +5,8 @@ import type { ClientSDK, ApplicationContext } from "@sitecore-marketplace-sdk/cl
 import { Icon } from "./Icon";
 import { mdiFileOutline, mdiMagnify, mdiClose } from "@mdi/js";
 import { ItemDetailModal } from "./ItemDetailModal";
+import { getClientRateLimiter, configureClientRateLimit } from "../utils/rateLimit";
+import { useAppConfig } from "../utils/hooks/useAppConfig";
 
 export interface TreeNode {
   itemId: string;
@@ -241,6 +243,7 @@ function isValidRootInput(value: string): boolean {
 }
 
 export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLanguageChange, onHoverChange, hoveredLine }: ContentTreeProps) {
+  const config = useAppConfig();
   const [rootNode, setRootNode] = useState<TreeNode | null>(null);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
@@ -248,6 +251,11 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
   const [modalNode, setModalNode] = useState<TreeNode | null>(null);
   const [modalData, setModalData] = useState<string | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
+
+  // Configure rate limiter when config changes
+  useEffect(() => {
+    configureClientRateLimit(config.rateLimit);
+  }, [config.rateLimit]);
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -306,32 +314,42 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
       `,
     };
 
-    client.mutate("xmc.authoring.graphql", {
-      params: { query: { sitecoreContextId }, body: graphqlQuery },
-    }).then((response) => {
-      const nodes = (
-        response as {
-          data?: { data?: { item?: { children?: { nodes?: Array<{ name: string }> } } } };
+    // Apply rate limiting
+    const fetchLanguages = async () => {
+      try {
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
+        const response = await client.mutate("xmc.authoring.graphql", {
+          params: { query: { sitecoreContextId }, body: graphqlQuery },
+        });
+
+        const nodes = (
+          response as {
+            data?: { data?: { item?: { children?: { nodes?: Array<{ name: string }> } } } };
+          }
+        )?.data?.data?.item?.children?.nodes;
+        if (nodes && nodes.length > 0) {
+          const names = nodes.map((n) => n.name);
+          setLanguages(names);
+          let stored: string | null = null;
+          let key = "contentTree_language";
+          if (appContext?.id && appContext?.installationId) {
+            const appIdSegment = appContext.id.split('-')[0];
+            const installationIdSegment = appContext.installationId.split('-')[0];
+            key = `contentTree_language_${appIdSegment}_${installationIdSegment}`;
+          }
+          try { stored = localStorage.getItem(key); } catch { /* ignore */ }
+          const effective = stored && names.includes(stored) ? stored : names[0];
+          setSelectedLanguage(effective);
+          onLanguageChange?.(effective);
         }
-      )?.data?.data?.item?.children?.nodes;
-      if (nodes && nodes.length > 0) {
-        const names = nodes.map((n) => n.name);
-        setLanguages(names);
-        let stored: string | null = null;
-        let key = "contentTree_language";
-        if (appContext?.id && appContext?.installationId) {
-          const appIdSegment = appContext.id.split('-')[0];
-          const installationIdSegment = appContext.installationId.split('-')[0];
-          key = `contentTree_language_${appIdSegment}_${installationIdSegment}`;
-        }
-        try { stored = localStorage.getItem(key); } catch { /* ignore */ }
-        const effective = stored && names.includes(stored) ? stored : names[0];
-        setSelectedLanguage(effective);
-        onLanguageChange?.(effective);
+      } catch (err) {
+        console.error("Error fetching languages:", err);
       }
-    }).catch((err) => {
-      console.error("Error fetching languages:", err);
-    });
+    };
+
+    fetchLanguages();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client, getSitecoreContextId]);
 
@@ -380,6 +398,10 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
       };
 
       try {
+        // Apply rate limiting
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
         const response = await client.mutate("xmc.authoring.graphql", {
           params: {
             query: { sitecoreContextId },
@@ -434,6 +456,10 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
       };
 
       try {
+        // Apply rate limiting
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
         const response = await client.mutate("xmc.authoring.graphql", {
           params: {
             query: { sitecoreContextId },
@@ -489,6 +515,10 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
       };
 
       try {
+        // Apply rate limiting
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
         const response = await client.mutate("xmc.authoring.graphql", {
           params: {
             query: { sitecoreContextId },
@@ -617,6 +647,10 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
       };
 
       try {
+        // Apply rate limiting
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
         const response = await client.mutate("xmc.authoring.graphql", {
           params: {
             query: { sitecoreContextId },

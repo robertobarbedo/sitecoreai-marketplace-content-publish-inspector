@@ -12,6 +12,8 @@ import {
   mdiUpdate,
 } from "@mdi/js";
 import { DeliveryItemDetailModal } from "./DeliveryItemDetailModal";
+import { getClientRateLimiter, configureClientRateLimit } from "../utils/rateLimit";
+import { useAppConfig } from "../utils/hooks/useAppConfig";
 
 function formatUpdated(raw?: string): string {
   if (!raw) return "";
@@ -209,11 +211,17 @@ export function DeliveryContentTree({
   hoveredLine,
   onHoverChange,
 }: DeliveryContentTreeProps) {
+  const config = useAppConfig();
   const [deliveryTree, setDeliveryTree] = useState<DeliveryNode | null>(null);
   const deliveryTreeRef = useRef<DeliveryNode | null>(null);
   const deliveryTreeLangRef = useRef<string>(language);
   const [error, setError] = useState<string | null>(null);
   const [modalNode, setModalNode] = useState<DeliveryNode | null>(null);
+
+  // Configure rate limiter when config changes
+  useEffect(() => {
+    configureClientRateLimit(config.rateLimit);
+  }, [config.rateLimit]);
 
   const handleOpenItem = useCallback((node: DeliveryNode) => {
     setModalNode(node);
@@ -273,6 +281,10 @@ export function DeliveryContentTree({
       };
 
       try {
+        // Apply rate limiting
+        const rateLimiter = getClientRateLimiter();
+        await rateLimiter.acquire();
+
         const response = await client.mutate(endpoint, {
           params: {
             query: { sitecoreContextId },

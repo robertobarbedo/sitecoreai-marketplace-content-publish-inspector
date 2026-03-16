@@ -22,6 +22,7 @@ All columns are synchronized for scrolling and hover interactions, making it eas
 - **Real-time status checking** - Automatically verifies if pages are accessible on the live website
 - **Synchronized navigation** - Hover and scroll interactions are synchronized across all four columns for easy comparison
 - **Search functionality** - Quickly find specific items within the content tree
+- **Rate limiting** - Configurable throttling of GraphQL queries and HTTP fetches to prevent API overload (see [Rate Limiting Documentation](RATE_LIMITING.md))
 
 ## Technology Stack
 
@@ -70,3 +71,28 @@ In the app configuration page, set the following options:
 
 Full Screen Marketplace apps are available in the environment portal in the **right top corner** menu.
 
+## Configuration
+
+### Rate Limiting
+
+The application includes built-in rate limiting for all GraphQL queries and HTTP fetches. This prevents API throttling and ensures consistent performance.
+
+**Quick Setup:**
+
+1. Create a `.env.local` file in the project root:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Configure the rate limit (default is 30 requests/second):
+   ```env
+   RATE_LIMIT_PER_SECOND=30
+   ```
+
+3. Restart the development server or rebuild for changes to take effect.
+
+For detailed information about rate limiting configuration, monitoring, and best practices, see the [Rate Limiting Documentation](RATE_LIMITING.md).
+
+## License
+
+This project is licensed under the MIT License.

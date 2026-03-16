@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { globalRateLimiter } from "../../../utils/rateLimit";
 
 function extractMetaValue(html: string, metaName: string): string | null {
   const metaPattern = /<meta\s+([^>]*)>/gi;
@@ -26,6 +27,9 @@ export async function GET(request: NextRequest) {
   const followRedirect = request.nextUrl.searchParams.get("followRedirect") === "true";
 
   try {
+    // Apply rate limiting on server side
+    await globalRateLimiter.acquire();
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
 
