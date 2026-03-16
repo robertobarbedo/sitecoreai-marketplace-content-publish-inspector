@@ -29,26 +29,26 @@ function MetaRow({ label, value }: { label: string; value: string | boolean }) {
     <tr>
       <td
         style={{
-          padding: "6px 10px",
+          padding: "var(--spacing-1-5) var(--spacing-2-5)",
           fontWeight: "var(--font-weight-semibold)",
           fontSize: "var(--font-size-xs)",
-          color: "#555",
+          color: "var(--color-muted-foreground)",
           whiteSpace: "nowrap",
           verticalAlign: "top",
           width: "140px",
-          borderBottom: "1px solid #f0f0f0",
+          borderBottom: "1px solid var(--color-border)",
         }}
       >
         {label}
       </td>
       <td
         style={{
-          padding: "6px 10px",
+          padding: "var(--spacing-1-5) var(--spacing-2-5)",
           fontSize: "var(--font-size-xs)",
-          color: "#222",
+          color: "var(--color-foreground)",
           wordBreak: "break-all",
           fontFamily: "var(--font-mono)",
-          borderBottom: "1px solid #f0f0f0",
+          borderBottom: "1px solid var(--color-border)",
         }}
       >
         {String(value)}
@@ -59,31 +59,31 @@ function MetaRow({ label, value }: { label: string; value: string | boolean }) {
 
 function FieldsTable({ fields, dim }: { fields: ParsedItemField[]; dim?: boolean }) {
   return (
-    <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", fontSize: "var(--font-size-xs)" }}>
+    <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid var(--color-border)", fontSize: "var(--font-size-xs)" }}>
       <thead>
-        <tr style={{ backgroundColor: "#f7f8fa" }}>
-          <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0", width: "180px" }}>
+        <tr style={{ backgroundColor: "var(--color-muted)" }}>
+          <th style={{ padding: "var(--spacing-2) var(--spacing-2-5)", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", borderBottom: "1px solid var(--color-border)", width: "180px" }}>
             Field Name
           </th>
-          <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0", width: "290px" }}>
+          <th style={{ padding: "var(--spacing-2) var(--spacing-2-5)", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", borderBottom: "1px solid var(--color-border)", width: "290px" }}>
             Field ID
           </th>
-          <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0" }}>
+          <th style={{ padding: "var(--spacing-2) var(--spacing-2-5)", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", borderBottom: "1px solid var(--color-border)" }}>
             Value
           </th>
         </tr>
       </thead>
       <tbody>
         {fields.map((field, i) => (
-          <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "#fff" : "#fafafa" }}>
+          <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "var(--color-background)" : "var(--color-muted)" }}>
             <td
               style={{
-                padding: "6px 10px",
+                padding: "var(--spacing-1-5) var(--spacing-2-5)",
                 verticalAlign: "top",
                 fontWeight: "var(--font-weight-semibold)",
-                color: dim ? "#777" : "#333",
+                color: dim ? "hsl(215.4, 16.3%, 56.9%)" : "var(--color-foreground)",
                 fontStyle: dim ? "italic" : "normal",
-                borderBottom: "1px solid #f0f0f0",
+                borderBottom: "1px solid var(--color-border)",
                 wordBreak: "break-word",
               }}
             >
@@ -91,28 +91,28 @@ function FieldsTable({ fields, dim }: { fields: ParsedItemField[]; dim?: boolean
             </td>
             <td
               style={{
-                padding: "6px 10px",
+                padding: "var(--spacing-1-5) var(--spacing-2-5)",
                 verticalAlign: "top",
                 fontFamily: "var(--font-mono)",
                 fontSize: "var(--font-size-2xs)",
-                color: dim ? "#aaa" : "#888",
-                borderBottom: "1px solid #f0f0f0",
+                color: dim ? "hsl(214.3, 31.8%, 75%)" : "var(--color-muted-foreground)",
+                borderBottom: "1px solid var(--color-border)",
               }}
             >
               {field.fieldId ?? "—"}
             </td>
             <td
               style={{
-                padding: "6px 10px",
+                padding: "var(--spacing-1-5) var(--spacing-2-5)",
                 verticalAlign: "top",
-                color: dim ? "#555" : "#222",
-                borderBottom: "1px solid #f0f0f0",
+                color: dim ? "hsl(215.4, 16.3%, 40%)" : "var(--color-foreground)",
+                borderBottom: "1px solid var(--color-border)",
                 wordBreak: "break-all",
                 fontFamily: "var(--font-mono)",
                 fontSize: "var(--font-size-2xs)",
               }}
             >
-              {field.value || <span style={{ color: "#bbb", fontStyle: "italic" }}>empty</span>}
+              {field.value || <span style={{ color: "hsl(214.3, 31.8%, 75%)", fontStyle: "italic" }}>empty</span>}
             </td>
           </tr>
         ))}
@@ -145,17 +145,17 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
   const systemFields = parsedItem?.fields?.nodes?.filter((f) => f.name.startsWith("__")) ?? [];
 
   const tabStyle = (active: boolean): React.CSSProperties => ({
-    padding: "6px 14px",
+    padding: "var(--spacing-1-5) var(--spacing-3-5)",
     fontSize: "var(--font-size-xs)",
     fontWeight: active ? "var(--font-weight-semibold)" : "var(--font-weight-normal)",
-    color: active ? "#1976d2" : "#666",
+    color: active ? "var(--color-primary)" : "var(--color-muted-foreground)",
     cursor: "pointer",
     userSelect: "none",
     background: "none",
     border: "none",
     borderBottomWidth: "2px",
     borderBottomStyle: "solid",
-    borderBottomColor: active ? "#1976d2" : "transparent",
+    borderBottomColor: active ? "var(--color-primary)" : "transparent",
   });
 
   return (
@@ -174,8 +174,8 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          backgroundColor: "#fff",
-          borderRadius: "10px",
+          backgroundColor: "var(--color-background)",
+          borderRadius: "var(--radius-lg)",
           boxShadow: "0 12px 48px rgba(0,0,0,0.28)",
           width: "min(1300px, 96vw)",
           height: "92vh",
@@ -191,16 +191,16 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "space-between",
-            padding: "14px 18px 10px",
-            borderBottom: "1px solid #e0e0e0",
+            padding: "var(--spacing-5)",
+            borderBottom: "1px solid var(--color-border)",
             flexShrink: 0,
           }}
         >
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: "var(--font-size-2xs)", color: "#999", marginBottom: "2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-0-5)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
               Item Details
             </div>
-            <div style={{ fontWeight: "var(--font-weight-semibold)", fontSize: "var(--font-size-lg)", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div style={{ fontWeight: "var(--font-weight-semibold)", fontSize: "var(--font-size-lg)", color: "var(--color-foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {node.path}
             </div>
           </div>
@@ -212,21 +212,21 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
               justifyContent: "center",
               width: "30px",
               height: "30px",
-              borderRadius: "6px",
+              borderRadius: "var(--radius-md)",
               cursor: "pointer",
               flexShrink: 0,
-              marginLeft: "12px",
+              marginLeft: "var(--spacing-3)",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#f0f0f0"; }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--color-muted)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
           >
-            <Icon path={mdiClose} size={18} color="#666" />
+            <Icon path={mdiClose} size={18} color="hsl(215.4, 16.3%, 46.9%)" />
           </span>
         </div>
 
         {/* Tabs */}
         {!loading && parsedItem && (
-          <div style={{ display: "flex", gap: "4px", padding: "0 18px", borderBottom: "1px solid #e8e8e8", flexShrink: 0 }}>
+          <div style={{ display: "flex", gap: "var(--spacing-1)", padding: "0 var(--spacing-4-5)", borderBottom: "1px solid var(--color-border)", flexShrink: 0 }}>
             <button style={tabStyle(activeTab === "structured")} onClick={() => setActiveTab("structured")}>
               Structured View
             </button>
@@ -237,26 +237,26 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
         )}
 
         {/* Body */}
-        <div style={{ flex: 1, overflow: "auto", padding: loading ? "16px 18px" : "0" }}>
+        <div style={{ flex: 1, overflow: "auto", padding: loading ? "var(--spacing-5)" : "0" }}>
           {loading && (
-            <div style={{ color: "#999", fontSize: "var(--font-size-sm)" }}>Fetching item data…</div>
+            <div style={{ color: "var(--color-muted-foreground)", fontSize: "var(--font-size-sm)" }}>Fetching item data…</div>
           )}
 
           {!loading && !rawData && (
-            <div style={{ color: "#e57373", fontSize: "var(--font-size-sm)", padding: "16px 18px" }}>Failed to fetch item data.</div>
+            <div style={{ color: "var(--color-danger)", fontSize: "var(--font-size-sm)", padding: "var(--spacing-5)" }}>Failed to fetch item data.</div>
           )}
 
           {!loading && (rawData && !parsedItem) && (
             <pre
               style={{
                 margin: 0,
-                padding: "16px 18px",
+                padding: "var(--spacing-5)",
                 fontSize: "var(--font-size-xs)",
                 lineHeight: "1.6",
                 whiteSpace: "pre-wrap",
                 wordBreak: "break-word",
                 fontFamily: "var(--font-mono)",
-                color: "#333",
+                color: "var(--color-foreground)",
               }}
             >
               {rawData}
@@ -264,12 +264,12 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
           )}
 
           {!loading && parsedItem && activeTab === "structured" && (
-            <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div style={{ padding: "var(--spacing-5)", display: "flex", flexDirection: "column", gap: "var(--spacing-5)" }}>
               <section>
-                <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-2)" }}>
                   Item Properties
                 </div>
-                <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", borderRadius: "6px", overflow: "hidden" }}>
+                <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid var(--color-border)", borderRadius: "var(--radius-md)", overflow: "hidden" }}>
                   <tbody>
                     <MetaRow label="Item ID" value={parsedItem.itemId} />
                     <MetaRow label="Name" value={parsedItem.name} />
@@ -287,7 +287,7 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
 
               {contentFields.length > 0 && (
                 <section>
-                  <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                  <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-2)" }}>
                     Content Fields ({contentFields.length})
                   </div>
                   <FieldsTable fields={contentFields} />
@@ -296,7 +296,7 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
 
               {systemFields.length > 0 && (
                 <section>
-                  <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                  <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-2)" }}>
                     System Fields ({systemFields.length})
                   </div>
                   <FieldsTable fields={systemFields} dim />
@@ -309,13 +309,13 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
             <pre
               style={{
                 margin: 0,
-                padding: "16px 18px",
+                padding: "var(--spacing-5)",
                 fontSize: "var(--font-size-xs)",
                 lineHeight: "1.6",
                 whiteSpace: "pre-wrap",
                 wordBreak: "break-word",
                 fontFamily: "var(--font-mono)",
-                color: "#333",
+                color: "var(--color-foreground)",
               }}
             >
               {rawData}

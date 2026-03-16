@@ -92,25 +92,25 @@ function DeliveryNodeItem({
       <div
         onMouseEnter={(e) => {
           setLocalHovered(true);
-          e.currentTarget.style.backgroundColor = "#e8f0fe";
+          e.currentTarget.style.backgroundColor = "var(--color-accent)";
           onHoverChange?.(lineIndex);
         }}
         onMouseLeave={(e) => {
           setLocalHovered(false);
-          e.currentTarget.style.backgroundColor = isHovered ? "#e8f0fe" : "transparent";
+          e.currentTarget.style.backgroundColor = isHovered ? "var(--color-accent)" : "transparent";
           onHoverChange?.(null);
         }}
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "4px",
-          padding: `3px 4px 3px ${depth * 16 + 4}px`,
+          gap: "var(--spacing-1)",
+          padding: `var(--spacing-0-5) var(--spacing-1) var(--spacing-0-5) ${depth * 16 + 4}px`,
           userSelect: "none",
-          borderRadius: "3px",
+          borderRadius: "var(--radius-base)",
           fontSize: "var(--font-size-sm)",
-          lineHeight: "1.4",
+          lineHeight: "20px",
           opacity: node.status === "not-found" ? 0.5 : 1,
-          backgroundColor: isHovered ? "#e8f0fe" : "transparent",
+          backgroundColor: isHovered ? "var(--color-accent)" : "transparent",
           transition: "background-color 0.1s ease",
           cursor: "default",
         }}
@@ -125,39 +125,39 @@ function DeliveryNodeItem({
             flexShrink: 0,
           }}
         >
-          {node.status === "loading" && <Icon path={mdiAutorenew} size={16} color="#999" spin />}
-          {node.status === "not-found" && <Icon path={mdiAlertCircleOutline} size={16} color="#e57373" />}
-          {node.status === "error" && <Icon path={mdiAlertOutline} size={16} color="#e57373" />}
-          {node.status === "found" && !isOutdated && <Icon path={mdiFileOutline} size={16} color="#666" />}
-          {node.status === "found" && isOutdated && <Icon path={mdiUpdate} size={16} color="#f57c00" />}
+          {node.status === "loading" && <Icon path={mdiAutorenew} size={16} color="hsl(215.4, 16.3%, 46.9%)" spin />}
+          {node.status === "not-found" && <Icon path={mdiAlertCircleOutline} size={16} color="hsl(346.8, 77.2%, 49.8%)" />}
+          {node.status === "error" && <Icon path={mdiAlertOutline} size={16} color="hsl(346.8, 77.2%, 49.8%)" />}
+          {node.status === "found" && !isOutdated && <Icon path={mdiFileOutline} size={16} color="hsl(215.4, 16.3%, 46.9%)" />}
+          {node.status === "found" && isOutdated && <Icon path={mdiUpdate} size={16} color="hsl(32.1, 98%, 53.9%)" />}
         </span>
         <span
           style={{
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
-            color: node.status === "not-found" || node.status === "error" ? "#e57373" : isOutdated ? "#f57c00" : undefined,
+            color: node.status === "not-found" || node.status === "error" ? "var(--color-danger)" : isOutdated ? "var(--color-warning)" : undefined,
           }}
         >
           {node.name}
         </span>
         {node.status === "found" && node.updated && (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: isOutdated ? "#f57c00" : "#b0b0b0", marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: isOutdated ? "var(--color-warning)" : "var(--color-muted-foreground)", marginLeft: "var(--spacing-1-5)", flexShrink: 0 }}>
             {formatUpdated(node.updated)}
           </span>
         )}
         {node.status === "loading" && (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "#999", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginLeft: "var(--spacing-1)" }}>
             loading…
           </span>
         )}
         {node.status === "not-found" && (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "#e57373", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-danger)", marginLeft: "var(--spacing-1)" }}>
             not found
           </span>
         )}
         {node.status === "error" && node.errorMessage && (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "#e57373", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-danger)", marginLeft: "var(--spacing-1)" }}>
             {node.errorMessage}
           </span>
         )}
@@ -169,19 +169,19 @@ function DeliveryNodeItem({
             }}
             style={{
               marginLeft: "auto",
-              padding: "1px 6px",
+              padding: "var(--spacing-px) var(--spacing-1-5)",
               fontSize: "var(--font-size-2xs)",
               fontWeight: "var(--font-weight-medium)",
-              color: "#444",
-              backgroundColor: "#fff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "3px",
+              color: "var(--color-foreground)",
+              backgroundColor: "var(--color-background)",
+              border: "1px solid var(--color-border)",
+              borderRadius: "var(--radius-base)",
               cursor: "pointer",
               flexShrink: 0,
               lineHeight: "1.4",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#eee"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#fff"; }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--color-muted)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--color-background)"; }}
           >
             Open
           </span>
@@ -400,30 +400,30 @@ export function DeliveryContentTree({
     >
       <div
         style={{
-          padding: "6px 12px",
+          padding: "var(--spacing-1-5) var(--spacing-3)",
           fontWeight: "var(--font-weight-semibold)",
           fontSize: "var(--font-size-xs)",
           textTransform: "uppercase",
           letterSpacing: "0.5px",
-          color: "#555",
-          borderBottom: "1px solid #e0e0e0",
-          minHeight: "36px",
+          color: "var(--color-muted-foreground)",
+          borderBottom: "1px solid var(--color-border)",
+          minHeight: "56px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: "8px",
+          gap: "var(--spacing-2)",
         }}
       >
         <span>{label}</span>
       </div>
-      <div style={{ padding: "4px 0" }}>
+      <div style={{ padding: "var(--spacing-1) 0" }}>
         {error && (
-          <div style={{ color: "red", padding: "8px 12px", fontSize: "var(--font-size-xs)" }}>
+          <div style={{ color: "var(--color-danger)", padding: "var(--spacing-2) var(--spacing-3)", fontSize: "var(--font-size-xs)" }}>
             {error}
           </div>
         )}
         {!deliveryTree && !error && (
-          <div style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}>
+          <div style={{ padding: "var(--spacing-2) var(--spacing-3)", color: "var(--color-muted-foreground)", fontSize: "var(--font-size-xs)" }}>
             Waiting for content tree…
           </div>
         )}

@@ -131,10 +131,10 @@ type DisplayState =
   | "outdated-preview"
   | "outdated-live";
 
-const COLOR_ERROR = "#e57373";
-const COLOR_REDIRECT = "#999";
-const COLOR_OUTDATED_PREVIEW = "#f57c00";
-const COLOR_OUTDATED_LIVE = "#e65100";
+const COLOR_ERROR = "hsl(346.8, 77.2%, 49.8%)"; // var(--color-danger)
+const COLOR_REDIRECT = "hsl(215.4, 16.3%, 46.9%)"; // var(--color-muted-foreground)
+const COLOR_OUTDATED_PREVIEW = "hsl(32.1, 98%, 53.9%)"; // var(--color-warning)
+const COLOR_OUTDATED_LIVE = "hsl(14, 100%, 50%)"; // darker warning/error
 
 interface WebsiteTreeProps {
   client: ClientSDK;
@@ -296,9 +296,9 @@ function WebsiteNodeItem({
     switch (display.state) {
       case "not-in-site":
       case "no-url":
-        return <Icon path={mdiFileOutline} size={16} color="#ccc" />;
+        return <Icon path={mdiFileOutline} size={16} color="hsl(214.3, 31.8%, 85%)" />;
       case "loading":
-        return <Icon path={mdiAutorenew} size={16} color="#999" spin />;
+        return <Icon path={mdiAutorenew} size={16} color="hsl(215.4, 16.3%, 46.9%)" spin />;
       case "http-redirect":
         return (
           <Icon path={mdiWeb} size={16} color={COLOR_REDIRECT} />
@@ -309,7 +309,7 @@ function WebsiteNodeItem({
         );
       case "no-meta":
       case "all-same":
-        return <Icon path={mdiWeb} size={16} color="#666" />;
+        return <Icon path={mdiWeb} size={16} color="hsl(215.4, 16.3%, 46.9%)" />;
       case "outdated-preview":
         return (
           <Icon path={mdiUpdate} size={16} color={COLOR_OUTDATED_PREVIEW} />
@@ -325,7 +325,7 @@ function WebsiteNodeItem({
     switch (display.state) {
       case "loading":
         return (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "#999", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginLeft: "var(--spacing-1)" }}>
             loading…
           </span>
         );
@@ -334,25 +334,25 @@ function WebsiteNodeItem({
         return null;
       case "no-meta":
         return (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "#bbb", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "hsl(214.3, 31.8%, 75%)", marginLeft: "var(--spacing-1)" }}>
             &nbsp;
           </span>
         );
       case "all-same":
         return display.websiteUpdated ? (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "#b0b0b0", marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginLeft: "var(--spacing-1-5)", flexShrink: 0 }}>
             {formatUpdated(display.websiteUpdated)}
           </span>
         ) : null;
       case "outdated-preview":
         return display.websiteUpdated ? (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: COLOR_OUTDATED_PREVIEW, marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: COLOR_OUTDATED_PREVIEW, marginLeft: "var(--spacing-1-5)", flexShrink: 0 }}>
             {formatUpdated(display.websiteUpdated)}
           </span>
         ) : null;
       case "outdated-live":
         return display.websiteUpdated ? (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: COLOR_OUTDATED_LIVE, marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: COLOR_OUTDATED_LIVE, marginLeft: "var(--spacing-1-5)", flexShrink: 0 }}>
             {formatUpdated(display.websiteUpdated)}
           </span>
         ) : null;
@@ -370,27 +370,27 @@ function WebsiteNodeItem({
       <div
         onMouseEnter={(e) => {
           setLocalHovered(true);
-          e.currentTarget.style.backgroundColor = "#e8f0fe";
+          e.currentTarget.style.backgroundColor = "var(--color-accent)";
           onHoverChange?.(lineIndex);
         }}
         onMouseLeave={(e) => {
           setLocalHovered(false);
           e.currentTarget.style.backgroundColor = isHovered
-            ? "#e8f0fe"
+            ? "var(--color-accent)"
             : "transparent";
           onHoverChange?.(null);
         }}
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "4px",
-          padding: `3px 4px 3px ${depth * 16 + 4}px`,
+          gap: "var(--spacing-1)",
+          padding: `var(--spacing-0-5) var(--spacing-1) var(--spacing-0-5) ${depth * 16 + 4}px`,
           userSelect: "none",
-          borderRadius: "3px",
+          borderRadius: "var(--radius-base)",
           fontSize: "var(--font-size-sm)",
-          lineHeight: "1.4",
+          lineHeight: "20px",
           opacity: isNotInSite ? 0.45 : 1,
-          backgroundColor: isHovered ? "#e8f0fe" : "transparent",
+          backgroundColor: isHovered ? "var(--color-accent)" : "transparent",
           transition: "background-color 0.1s ease",
           cursor: "default",
         }}
@@ -420,16 +420,24 @@ function WebsiteNodeItem({
         {(display.state === "http-redirect" || display.state === "http-error") && display.httpStatus && (
           <span
             style={{
-              marginLeft: "6px",
-              padding: "1px 6px",
+              marginLeft: "var(--spacing-1-5)",
+              padding: "var(--spacing-0-5) var(--spacing-2)",
               fontSize: "var(--font-size-2xs)",
-              fontWeight: "var(--font-weight-medium)",
-              backgroundColor: "#fff",
-              border: `1px solid rgb(208, 208, 208)`,
-              color: "rgb(176, 176, 176)",
-              borderRadius: "3px",
+              fontWeight: "var(--font-weight-semibold)",
+              backgroundColor: display.state === "http-error" 
+                ? "hsl(346.8, 77.2%, 95%)" 
+                : "hsl(210, 40%, 96.1%)",
+              border: display.state === "http-error"
+                ? "1px solid hsl(346.8, 77.2%, 85%)"
+                : "1px solid hsl(214.3, 31.8%, 91.4%)",
+              color: display.state === "http-error" 
+                ? "var(--color-danger)" 
+                : "hsl(215.4, 16.3%, 46.9%)",
+              borderRadius: "var(--radius-sm)",
               flexShrink: 0,
-              lineHeight: "1.4",
+              lineHeight: "1.2",
+              textTransform: "uppercase",
+              letterSpacing: "0.025em",
             }}
           >
             {display.httpStatus}
@@ -444,23 +452,23 @@ function WebsiteNodeItem({
             onClick={(e) => e.stopPropagation()}
             style={{
               marginLeft: "auto",
-              padding: "1px 6px",
+              padding: "var(--spacing-px) var(--spacing-1-5)",
               fontSize: "var(--font-size-2xs)",
               fontWeight: "var(--font-weight-medium)",
-              color: "#444",
-              backgroundColor: "#fff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "3px",
+              color: "var(--color-foreground)",
+              backgroundColor: "var(--color-background)",
+              border: "1px solid var(--color-border)",
+              borderRadius: "var(--radius-base)",
               cursor: "pointer",
               flexShrink: 0,
               lineHeight: "1.4",
               textDecoration: "none",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#eee";
+              e.currentTarget.style.backgroundColor = "var(--color-muted)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#fff";
+              e.currentTarget.style.backgroundColor = "var(--color-background)";
             }}
           >
             Ctrl Click
@@ -671,22 +679,22 @@ export function WebsiteTree({
     >
       <div
         style={{
-          padding: "6px 12px",
+          padding: "var(--spacing-1-5) var(--spacing-3)",
           fontWeight: "var(--font-weight-semibold)",
           fontSize: "var(--font-size-xs)",
           textTransform: "uppercase",
           letterSpacing: "0.5px",
-          color: "#555",
-          borderBottom: "1px solid #e0e0e0",
-          minHeight: "36px",
+          color: "var(--color-muted-foreground)",
+          borderBottom: "1px solid var(--color-border)",
+          minHeight: "56px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: "8px",
+          gap: "var(--spacing-2)",
         }}
       >
         <span>Website</span>
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-1)" }}>
           <span
             onClick={() => setSettingsOpen(true)}
             title="Configure __Updated source"
@@ -696,14 +704,14 @@ export function WebsiteTree({
               justifyContent: "center",
               width: "22px",
               height: "22px",
-              borderRadius: "4px",
+              borderRadius: "var(--radius-base)",
               cursor: "pointer",
               flexShrink: 0,
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#e8e8e8"; }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--color-muted)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
           >
-            <Icon path={mdiCogOutline} size={16} color="#888" />
+            <Icon path={mdiCogOutline} size={16} color="hsl(215.4, 16.3%, 53%)" />
           </span>
           {hasData && (
             <button
@@ -712,22 +720,28 @@ export function WebsiteTree({
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                padding: "2px 7px",
+                justifyContent: "center",
+                gap: "var(--spacing-1)",
+                padding: "0 var(--spacing-2)",
+                height: "24px",
                 fontSize: "var(--font-size-2xs)",
-                fontWeight: "var(--font-weight-medium)",
-                border: "1px solid #d0d0d0",
-                borderRadius: "3px",
-                backgroundColor: "#fff",
-                color: "#555",
+                fontWeight: "var(--font-weight-semibold)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-md)",
+                backgroundColor: "transparent",
+                color: "var(--color-foreground)",
                 cursor: "pointer",
                 textTransform: "none",
                 letterSpacing: 0,
+                transition: "background-color 0.15s, border-color 0.15s",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#f0f0f0";
+                e.currentTarget.style.backgroundColor = "var(--color-accent)";
+                e.currentTarget.style.borderColor = "var(--color-border)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#fff";
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.borderColor = "var(--color-border)";
               }}
             >
               Refresh
@@ -735,31 +749,31 @@ export function WebsiteTree({
           )}
         </div>
       </div>
-      <div style={{ padding: "4px 0" }}>
+      <div style={{ padding: "var(--spacing-1) 0" }}>
         {sitesLoading && (
           <div
-            style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}
+            style={{ padding: "var(--spacing-2) var(--spacing-3)", color: "var(--color-muted-foreground)", fontSize: "var(--font-size-xs)" }}
           >
             Loading site information…
           </div>
         )}
         {!sitesLoading && sites.length === 0 && (
           <div
-            style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}
+            style={{ padding: "var(--spacing-2) var(--spacing-3)", color: "var(--color-muted-foreground)", fontSize: "var(--font-size-xs)" }}
           >
             No sites found.
           </div>
         )}
         {!authoringTree && sites.length > 0 && (
           <div
-            style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}
+            style={{ padding: "var(--spacing-2) var(--spacing-3)", color: "var(--color-muted-foreground)", fontSize: "var(--font-size-xs)" }}
           >
             Waiting for content tree…
           </div>
         )}
         {(!previewTree || !liveTree) && authoringTree && sites.length > 0 && (
           <div
-            style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}
+            style={{ padding: "var(--spacing-2) var(--spacing-3)", color: "var(--color-muted-foreground)", fontSize: "var(--font-size-xs)" }}
           >
             Waiting for delivery data…
           </div>
@@ -794,12 +808,15 @@ export function WebsiteTree({
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              backgroundColor: "#fff",
-              borderRadius: "10px",
+              backgroundColor: "var(--color-background)",
+              borderRadius: "var(--radius-lg)",
               boxShadow: "0 12px 48px rgba(0,0,0,0.28)",
               width: "min(420px, 92vw)",
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              maxHeight: "90vh",
+              fontFamily: "var(--font-body)",
               overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <div
@@ -807,11 +824,11 @@ export function WebsiteTree({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                padding: "14px 18px",
-                borderBottom: "1px solid #e0e0e0",
+                padding: "var(--spacing-5)",
+                borderBottom: "1px solid var(--color-border)",
               }}
             >
-              <span style={{ fontWeight: "var(--font-weight-semibold)", fontSize: "var(--font-size-base)", color: "#111" }}>
+              <span style={{ fontWeight: "var(--font-weight-semibold)", fontSize: "var(--font-size-base)", color: "var(--color-foreground)" }}>
                 Website Settings
               </span>
               <span
@@ -822,20 +839,20 @@ export function WebsiteTree({
                   justifyContent: "center",
                   width: "28px",
                   height: "28px",
-                  borderRadius: "6px",
+                  borderRadius: "var(--radius-md)",
                   cursor: "pointer",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#f0f0f0"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--color-muted)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
               >
-                <Icon path={mdiClose} size={18} color="#666" />
+                <Icon path={mdiClose} size={18} color="hsl(215.4, 16.3%, 46.9%)" />
               </span>
             </div>
-            <div style={{ padding: "16px 18px", fontSize: "var(--font-size-sm)", lineHeight: "1.7", color: "#333" }}>
-              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "10px" }}>
+            <div style={{ padding: "var(--spacing-5)", fontSize: "var(--font-size-sm)", lineHeight: "1.7", color: "var(--color-foreground)", overflow: "auto" }}>
+              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-2-5)" }}>
                 Source for __Updated comparison
               </div>
-              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "var(--spacing-2)", cursor: "pointer", marginBottom: "var(--spacing-2)" }}>
                 <input
                   type="radio"
                   name="updatedSource"
@@ -854,7 +871,7 @@ export function WebsiteTree({
                 />
                 <span>HTTP Header</span>
               </label>
-              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "14px" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "var(--spacing-2)", cursor: "pointer", marginBottom: "var(--spacing-3-5)" }}>
                 <input
                   type="radio"
                   name="updatedSource"
@@ -873,7 +890,7 @@ export function WebsiteTree({
                 />
                 <span>Meta Tag</span>
               </label>
-              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "6px" }}>
+              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-1-5)" }}>
                 {settings.source === "header" ? "Header Name" : "Meta Tag Name"}
               </div>
               <input
@@ -888,26 +905,26 @@ export function WebsiteTree({
                 style={{
                   width: "100%",
                   fontSize: "var(--font-size-xs)",
-                  padding: "6px 10px",
-                  border: "1px solid #d0d0d0",
-                  borderRadius: "4px",
-                  color: "#222",
+                  padding: "var(--spacing-1-5) var(--spacing-2-5)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--color-foreground)",
                   fontFamily: "var(--font-mono)",
                   outline: "none",
                   boxSizing: "border-box",
                 }}
-                onFocus={(e) => { e.currentTarget.style.borderColor = "#90caf9"; }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = "#d0d0d0"; }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-ring)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border)"; }}
               />
-              <div style={{ fontSize: "var(--font-size-2xs)", color: "#aaa", marginTop: "6px" }}>
+              <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginTop: "var(--spacing-1-5)" }}>
                 {settings.source === "header"
                   ? "The HTTP response header to extract the updated timestamp from."
                   : "The <meta> tag name attribute to extract the updated timestamp from."}
               </div>
-              <div style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginTop: "20px", marginBottom: "10px" }}>
+              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginTop: "var(--spacing-5)", marginBottom: "var(--spacing-2-5)" }}>
                 Redirect Handling
               </div>
-              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "var(--spacing-2)", cursor: "pointer", marginBottom: "var(--spacing-2)" }}>
                 <input
                   type="checkbox"
                   checked={settings.followRedirectHomepage}

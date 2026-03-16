@@ -91,25 +91,25 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "4px",
-          padding: `3px 4px 3px ${depth * 16 + 4}px`,
+          gap: "var(--spacing-1)",
+          padding: `var(--spacing-0-5) var(--spacing-1) var(--spacing-0-5) ${depth * 16 + 4}px`,
           cursor: clickable ? "pointer" : "default",
           userSelect: "none",
-          borderRadius: "3px",
+          borderRadius: "var(--radius-base)",
           fontSize: "var(--font-size-sm)",
-          lineHeight: "1.4",
+          lineHeight: "20px",
           opacity: 1,
-          backgroundColor: isExternallyHovered ? "#e8f0fe" : "transparent",
+          backgroundColor: isExternallyHovered ? "var(--color-accent)" : "transparent",
           transition: "background-color 0.1s ease",
         }}
         onMouseEnter={(e) => {
           setHovered(true);
-          e.currentTarget.style.backgroundColor = "#e8f0fe";
+          e.currentTarget.style.backgroundColor = "var(--color-accent)";
           onHoverChange(lineIndex);
         }}
         onMouseLeave={(e) => {
           setHovered(false);
-          e.currentTarget.style.backgroundColor = isExternallyHovered ? "#e8f0fe" : "transparent";
+          e.currentTarget.style.backgroundColor = isExternallyHovered ? "var(--color-accent)" : "transparent";
           onHoverChange(null);
         }}
       >
@@ -121,7 +121,7 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
             width: "16px",
             height: "16px",
             flexShrink: 0,
-            color: "#666",
+            color: "var(--color-muted-foreground)",
             fontFamily: "Arial, sans-serif",
             fontSize: "10px",
             transition: "transform 0.15s ease",
@@ -140,7 +140,7 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
             flexShrink: 0,
           }}
         >
-          <Icon path={mdiFileOutline} size={16} color="#666" />
+          <Icon path={mdiFileOutline} size={16} color="hsl(215.4, 16.3%, 46.9%)" />
         </span>
         <span
           style={{
@@ -154,28 +154,30 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
         {node.workflow && !node.workflow.workflowState.final && (
           <span
             style={{
-              marginLeft: "6px",
-              padding: "1px 6px",
+              marginLeft: "var(--spacing-1-5)",
+              padding: "var(--spacing-0-5) var(--spacing-2)",
               fontSize: "var(--font-size-2xs)",
-              fontWeight: "var(--font-weight-medium)",
-              color: "#b0b0b0",
-              backgroundColor: "#fff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "3px",
+              fontWeight: "var(--font-weight-semibold)",
+              color: "hsl(215.4, 16.3%, 46.9%)",
+              backgroundColor: "hsl(210, 40%, 96.1%)",
+              border: "1px solid hsl(214.3, 31.8%, 91.4%)",
+              borderRadius: "var(--radius-sm)",
               flexShrink: 0,
-              lineHeight: "1.4",
+              lineHeight: "1.2",
+              textTransform: "uppercase",
+              letterSpacing: "0.025em",
             }}
           >
             {node.workflow.workflowState.displayName}
           </span>
         )}
         {node.updated && (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "#b0b0b0", marginLeft: "6px", flexShrink: 0 }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginLeft: "var(--spacing-1-5)", flexShrink: 0 }}>
             {formatUpdated(node.updated)}
           </span>
         )}
         {loading && (
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "#999", marginLeft: "4px" }}>
+          <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginLeft: "var(--spacing-1)" }}>
             loading…
           </span>
         )}
@@ -187,22 +189,22 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
             }}
             style={{
               marginLeft: "auto",
-              padding: "1px 6px",
+              padding: "var(--spacing-px) var(--spacing-1-5)",
               fontSize: "var(--font-size-2xs)",
               fontWeight: "var(--font-weight-medium)",
-              color: "#444",
-              backgroundColor: "#fff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "3px",
+              color: "var(--color-foreground)",
+              backgroundColor: "var(--color-background)",
+              border: "1px solid var(--color-border)",
+              borderRadius: "var(--radius-base)",
               cursor: "pointer",
               flexShrink: 0,
               lineHeight: "1.4",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#eee";
+              e.currentTarget.style.backgroundColor = "var(--color-muted)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#fff";
+              e.currentTarget.style.backgroundColor = "var(--color-background)";
             }}
           >
             Open
@@ -683,32 +685,33 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
     >
       <div
         style={{
-          padding: "6px 12px",
+          padding: "var(--spacing-1-5) var(--spacing-3)",
           fontWeight: "var(--font-weight-semibold)",
           fontSize: "var(--font-size-xs)",
           textTransform: "uppercase",
           letterSpacing: "0.5px",
-          color: "#555",
-          borderBottom: "1px solid #e0e0e0",
+          color: "var(--color-muted-foreground)",
+          borderBottom: "1px solid var(--color-border)",
           display: "flex",
           flexDirection: "column",
-          minHeight: "36px",
+          minHeight: "56px",
+          justifyContent: "center",
           gap: "0px",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span>Authoring API</span>
-          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-1)" }}>
             <select
               value={selectedLanguage}
               onChange={(e) => handleLanguageChange(e.target.value)}
               style={{
                 fontSize: "var(--font-size-2xs)",
-                padding: "2px 4px",
-                border: "1px solid #d0d0d0",
-                borderRadius: "3px",
-                color: "#444",
-                backgroundColor: "#fff",
+                padding: "var(--spacing-0-5) var(--spacing-1)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-base)",
+                color: "var(--color-foreground)",
+                backgroundColor: "var(--color-background)",
                 cursor: "pointer",
                 fontWeight: "var(--font-weight-normal)",
                 textTransform: "none",
@@ -730,14 +733,14 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
                   justifyContent: "center",
                   width: "22px",
                   height: "22px",
-                  borderRadius: "4px",
+                  borderRadius: "var(--radius-base)",
                   cursor: "pointer",
                   flexShrink: 0,
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#e8e8e8"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--color-muted)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
               >
-                <Icon path={mdiClose} size={14} color="#999" />
+                <Icon path={mdiClose} size={14} color="hsl(215.4, 16.3%, 46.9%)" />
               </span>
             )}
             <span
@@ -749,21 +752,21 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
                 justifyContent: "center",
                 width: "22px",
                 height: "22px",
-                borderRadius: "4px",
+                borderRadius: "var(--radius-base)",
                 cursor: "pointer",
                 flexShrink: 0,
-                backgroundColor: searchOpen ? "#e0e0e0" : "transparent",
+                backgroundColor: searchOpen ? "var(--color-muted)" : "transparent",
               }}
-              onMouseEnter={(e) => { if (!searchOpen) e.currentTarget.style.backgroundColor = "#e8e8e8"; }}
+              onMouseEnter={(e) => { if (!searchOpen) e.currentTarget.style.backgroundColor = "var(--color-muted)"; }}
               onMouseLeave={(e) => { if (!searchOpen) e.currentTarget.style.backgroundColor = "transparent"; }}
             >
-              <Icon path={mdiMagnify} size={16} color="#666" />
+              <Icon path={mdiMagnify} size={16} color="hsl(215.4, 16.3%, 46.9%)" />
             </span>
           </div>
         </div>
         {searchOpen && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px", paddingTop: "6px", paddingBottom: "2px" }}>
-            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-1)", paddingTop: "var(--spacing-1-5)", paddingBottom: "var(--spacing-0-5)" }}>
+            <div style={{ display: "flex", gap: "var(--spacing-1)", alignItems: "center" }}>
               <input
                 type="text"
                 value={searchInput}
@@ -774,57 +777,61 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
                 style={{
                   flex: 1,
                   fontSize: "var(--font-size-xs)",
-                  padding: "4px 8px",
-                  border: "1px solid #d0d0d0",
-                  borderRadius: "4px",
-                  color: "#222",
+                  padding: "var(--spacing-1) var(--spacing-2)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--color-foreground)",
                   fontFamily: "var(--font-mono)",
                   fontWeight: "var(--font-weight-normal)",
                   textTransform: "none",
                   letterSpacing: 0,
                   outline: "none",
                 }}
-                onFocus={(e) => { e.currentTarget.style.borderColor = "#90caf9"; }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = "#d0d0d0"; }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-ring)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border)"; }}
               />
               <button
                 onClick={handleSearchSubmit}
                 style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   fontSize: "var(--font-size-2xs)",
                   fontWeight: "var(--font-weight-semibold)",
-                  padding: "0 10px",
-                  height: "26px",
+                  padding: "0 var(--spacing-2-5)",
+                  height: "24px",
                   border: "none",
-                  borderRadius: "4px",
-                  backgroundColor: "#1976d2",
-                  color: "#fff",
+                  borderRadius: "var(--radius-md)",
+                  backgroundColor: "var(--color-primary)",
+                  color: "var(--color-primary-foreground)",
                   cursor: "pointer",
                   textTransform: "none",
                   letterSpacing: 0,
                   flexShrink: 0,
+                  transition: "background-color 0.15s",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#1565c0"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#1976d2"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--color-primary-hover)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--color-primary)"; }}
               >
                 Go
               </button>
             </div>
             {searchError && (
-              <div style={{ fontSize: "var(--font-size-2xs)", color: "#e57373", fontWeight: "var(--font-weight-normal)", textTransform: "none", letterSpacing: 0 }}>
+              <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-danger)", fontWeight: "var(--font-weight-normal)", textTransform: "none", letterSpacing: 0 }}>
                 {searchError}
               </div>
             )}
           </div>
         )}
       </div>
-      <div style={{ padding: "4px 0" }}>
+      <div style={{ padding: "var(--spacing-1) 0" }}>
         {error && (
-          <div style={{ color: "red", padding: "8px 12px", fontSize: "var(--font-size-xs)" }}>
+          <div style={{ color: "var(--color-danger)", padding: "var(--spacing-2) var(--spacing-3)", fontSize: "var(--font-size-xs)" }}>
             {error}
           </div>
         )}
         {!rootNode && !error && (
-          <div style={{ padding: "8px 12px", color: "#999", fontSize: "var(--font-size-xs)" }}>
+          <div style={{ padding: "var(--spacing-2) var(--spacing-3)", color: "var(--color-muted-foreground)", fontSize: "var(--font-size-xs)" }}>
             Loading…
           </div>
         )}

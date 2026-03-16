@@ -46,26 +46,26 @@ function MetaRow({ label, value }: { label: string; value: string }) {
     <tr>
       <td
         style={{
-          padding: "6px 10px",
+          padding: "var(--spacing-1-5) var(--spacing-2-5)",
           fontWeight: "var(--font-weight-semibold)",
           fontSize: "var(--font-size-xs)",
-          color: "#555",
+          color: "var(--color-muted-foreground)",
           whiteSpace: "nowrap",
           verticalAlign: "top",
           width: "140px",
-          borderBottom: "1px solid #f0f0f0",
+          borderBottom: "1px solid var(--color-border)",
         }}
       >
         {label}
       </td>
       <td
         style={{
-          padding: "6px 10px",
+          padding: "var(--spacing-1-5) var(--spacing-2-5)",
           fontSize: "var(--font-size-xs)",
-          color: "#222",
+          color: "var(--color-foreground)",
           wordBreak: "break-all",
           fontFamily: "var(--font-mono)",
-          borderBottom: "1px solid #f0f0f0",
+          borderBottom: "1px solid var(--color-border)",
         }}
       >
         {value}
@@ -76,28 +76,28 @@ function MetaRow({ label, value }: { label: string; value: string }) {
 
 function FieldsTable({ fields }: { fields: DeliveryItemField[] }) {
   return (
-    <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", fontSize: "var(--font-size-xs)" }}>
+    <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid var(--color-border)", fontSize: "var(--font-size-xs)" }}>
       <thead>
-        <tr style={{ backgroundColor: "#f7f8fa" }}>
-          <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0", width: "220px" }}>
+        <tr style={{ backgroundColor: "var(--color-muted)" }}>
+          <th style={{ padding: "var(--spacing-2) var(--spacing-2-5)", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", borderBottom: "1px solid var(--color-border)", width: "220px" }}>
             Field Name
           </th>
-          <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0" }}>
+          <th style={{ padding: "var(--spacing-2) var(--spacing-2-5)", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", borderBottom: "1px solid var(--color-border)" }}>
             Value
           </th>
         </tr>
       </thead>
       <tbody>
         {fields.map((field, i) => (
-          <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "#fff" : "#fafafa" }}>
+          <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "var(--color-background)" : "var(--color-muted)" }}>
             <td
               style={{
-                padding: "6px 10px",
+                padding: "var(--spacing-1-5) var(--spacing-2-5)",
                 verticalAlign: "top",
                 fontWeight: "var(--font-weight-semibold)",
-                color: field.name.startsWith("__") ? "#999" : "#333",
+                color: field.name.startsWith("__") ? "hsl(215.4, 16.3%, 56.9%)" : "var(--color-foreground)",
                 fontStyle: field.name.startsWith("__") ? "italic" : "normal",
-                borderBottom: "1px solid #f0f0f0",
+                borderBottom: "1px solid var(--color-border)",
                 wordBreak: "break-word",
               }}
             >
@@ -105,16 +105,16 @@ function FieldsTable({ fields }: { fields: DeliveryItemField[] }) {
             </td>
             <td
               style={{
-                padding: "6px 10px",
+                padding: "var(--spacing-1-5) var(--spacing-2-5)",
                 verticalAlign: "top",
-                color: field.name.startsWith("__") ? "#888" : "#222",
-                borderBottom: "1px solid #f0f0f0",
+                color: field.name.startsWith("__") ? "var(--color-muted-foreground)" : "var(--color-foreground)",
+                borderBottom: "1px solid var(--color-border)",
                 wordBreak: "break-all",
                 fontFamily: "var(--font-mono)",
                 fontSize: "var(--font-size-2xs)",
               }}
             >
-              {field.value || <span style={{ color: "#bbb", fontStyle: "italic" }}>empty</span>}
+              {field.value || <span style={{ color: "hsl(214.3, 31.8%, 75%)", fontStyle: "italic" }}>empty</span>}
             </td>
           </tr>
         ))}
@@ -128,13 +128,13 @@ function JsonBlock({ data }: { data: string }) {
     <pre
       style={{
         margin: 0,
-        padding: "16px 18px",
+        padding: "var(--spacing-5)",
         fontSize: "var(--font-size-xs)",
         lineHeight: "1.6",
         whiteSpace: "pre-wrap",
         wordBreak: "break-word",
         fontFamily: "var(--font-mono)",
-        color: "#333",
+        color: "var(--color-foreground)",
       }}
     >
       {data}
@@ -365,17 +365,17 @@ export function DeliveryItemDetailModal({
   const systemFields = itemDetail?.fields?.filter((f) => f.name.startsWith("__")) ?? [];
 
   const tabStyle = (active: boolean): React.CSSProperties => ({
-    padding: "6px 14px",
+    padding: "var(--spacing-1-5) var(--spacing-3-5)",
     fontSize: "var(--font-size-xs)",
     fontWeight: active ? "var(--font-weight-semibold)" : "var(--font-weight-normal)",
-    color: active ? "#1976d2" : "#666",
+    color: active ? "var(--color-primary)" : "var(--color-muted-foreground)",
     cursor: "pointer",
     userSelect: "none",
     background: "none",
     border: "none",
     borderBottomWidth: "2px",
     borderBottomStyle: "solid",
-    borderBottomColor: active ? "#1976d2" : "transparent",
+    borderBottomColor: active ? "var(--color-primary)" : "transparent",
   });
 
 
@@ -395,14 +395,14 @@ export function DeliveryItemDetailModal({
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          backgroundColor: "#fff",
-          borderRadius: "10px",
+          backgroundColor: "var(--color-background)",
+          borderRadius: "var(--radius-lg)",
           boxShadow: "0 12px 48px rgba(0,0,0,0.28)",
           width: "min(1300px, 96vw)",
           height: "92vh",
           display: "flex",
           flexDirection: "column",
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          fontFamily: "var(--font-body)",
           overflow: "hidden",
         }}
       >
@@ -412,16 +412,16 @@ export function DeliveryItemDetailModal({
             display: "flex",
             alignItems: "flex-start",
             justifyContent: "space-between",
-            padding: "14px 18px 10px",
-            borderBottom: "1px solid #e0e0e0",
+            padding: "var(--spacing-5)",
+            borderBottom: "1px solid var(--color-border)",
             flexShrink: 0,
           }}
         >
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: "var(--font-size-2xs)", color: "#999", marginBottom: "2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-0-5)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
               Delivery API — {endpoint === "xmc.live.graphql" ? "Live" : "Preview"}
             </div>
-            <div style={{ fontWeight: "var(--font-weight-semibold)", fontSize: "var(--font-size-lg)", color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <div style={{ fontWeight: "var(--font-weight-semibold)", fontSize: "var(--font-size-lg)", color: "var(--color-foreground)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {node.path}
             </div>
           </div>
@@ -433,20 +433,20 @@ export function DeliveryItemDetailModal({
               justifyContent: "center",
               width: "30px",
               height: "30px",
-              borderRadius: "6px",
+              borderRadius: "var(--radius-md)",
               cursor: "pointer",
               flexShrink: 0,
-              marginLeft: "12px",
+              marginLeft: "var(--spacing-3)",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#f0f0f0"; }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--color-muted)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; }}
           >
-            <Icon path={mdiClose} size={18} color="#666" />
+            <Icon path={mdiClose} size={18} color="hsl(215.4, 16.3%, 46.9%)" />
           </span>
         </div>
 
         {/* Tabs */}
-        <div style={{ display: "flex", gap: "4px", padding: "0 18px", borderBottom: "1px solid #e8e8e8", flexShrink: 0 }}>
+        <div style={{ display: "flex", gap: "var(--spacing-1)", padding: "0 var(--spacing-4-5)", borderBottom: "1px solid var(--color-border)", flexShrink: 0 }}>
           <button style={tabStyle(activeTab === "structured")} onClick={() => setActiveTab("structured")}>
             Structured View
           </button>
@@ -459,27 +459,27 @@ export function DeliveryItemDetailModal({
         </div>
 
         {/* Body */}
-        <div style={{ flex: 1, overflow: "auto", padding: itemLoading && activeTab !== "layout" ? "16px 18px" : "0" }}>
+        <div style={{ flex: 1, overflow: "auto", padding: itemLoading && activeTab !== "layout" ? "var(--spacing-5)" : "0" }}>
 
           {/* Structured View */}
           {activeTab === "structured" && (
             <>
               {itemLoading && (
-                <div style={{ color: "#999", fontSize: "var(--font-size-sm)", padding: "16px 18px" }}>Fetching item data…</div>
+                <div style={{ color: "var(--color-muted-foreground)", fontSize: "var(--font-size-sm)", padding: "var(--spacing-5)" }}>Fetching item data…</div>
               )}
               {!itemLoading && !itemRaw && (
-                <div style={{ color: "#e57373", fontSize: "var(--font-size-sm)", padding: "16px 18px" }}>Failed to fetch item data.</div>
+                <div style={{ color: "var(--color-danger)", fontSize: "var(--font-size-sm)", padding: "var(--spacing-5)" }}>Failed to fetch item data.</div>
               )}
               {!itemLoading && itemRaw && !itemDetail && (
                 <JsonBlock data={itemRaw} />
               )}
               {!itemLoading && itemDetail && (
-                <div style={{ padding: "16px 18px", display: "flex", flexDirection: "column", gap: "20px" }}>
+                <div style={{ padding: "var(--spacing-5)", display: "flex", flexDirection: "column", gap: "var(--spacing-5)" }}>
                   <section>
-                    <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                    <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-2)" }}>
                       Item Properties
                     </div>
-                    <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", borderRadius: "6px", overflow: "hidden" }}>
+                    <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid var(--color-border)", borderRadius: "var(--radius-md)", overflow: "hidden" }}>
                       <tbody>
                         <MetaRow label="ID" value={itemDetail.id} />
                         <MetaRow label="Name" value={itemDetail.name} />
@@ -504,7 +504,7 @@ export function DeliveryItemDetailModal({
 
                   {contentFields.length > 0 && (
                     <section>
-                      <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                      <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-2)" }}>
                         Content Fields ({contentFields.length})
                       </div>
                       <FieldsTable fields={contentFields} />
@@ -513,7 +513,7 @@ export function DeliveryItemDetailModal({
 
                   {systemFields.length > 0 && (
                     <section>
-                      <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                      <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-2)" }}>
                         System Fields ({systemFields.length})
                       </div>
                       <FieldsTable fields={systemFields} />
@@ -522,23 +522,23 @@ export function DeliveryItemDetailModal({
 
                   {(itemDetail.children?.results?.length ?? 0) > 0 && (
                     <section>
-                      <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "#888", marginBottom: "8px" }}>
+                      <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginBottom: "var(--spacing-2)" }}>
                         Children ({itemDetail.children!.results!.length})
                       </div>
-                      <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid #e8e8e8", fontSize: "var(--font-size-xs)" }}>
+                      <table style={{ borderCollapse: "collapse", width: "100%", border: "1px solid var(--color-border)", fontSize: "var(--font-size-xs)" }}>
                         <thead>
-                          <tr style={{ backgroundColor: "#f7f8fa" }}>
-                            <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0", width: "180px" }}>Name</th>
-                            <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0" }}>Path</th>
-                            <th style={{ padding: "7px 10px", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "#555", borderBottom: "1px solid #e0e0e0", width: "290px" }}>ID</th>
+                          <tr style={{ backgroundColor: "var(--color-muted)" }}>
+                            <th style={{ padding: "var(--spacing-2) var(--spacing-2-5)", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", borderBottom: "1px solid var(--color-border)", width: "180px" }}>Name</th>
+                            <th style={{ padding: "var(--spacing-2) var(--spacing-2-5)", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", borderBottom: "1px solid var(--color-border)" }}>Path</th>
+                            <th style={{ padding: "var(--spacing-2) var(--spacing-2-5)", textAlign: "left", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", borderBottom: "1px solid var(--color-border)", width: "290px" }}>ID</th>
                           </tr>
                         </thead>
                         <tbody>
                           {itemDetail.children!.results!.map((child, i) => (
-                            <tr key={child.id} style={{ backgroundColor: i % 2 === 0 ? "#fff" : "#fafafa" }}>
-                              <td style={{ padding: "6px 10px", fontWeight: "var(--font-weight-semibold)", color: "#333", borderBottom: "1px solid #f0f0f0", wordBreak: "break-word" }}>{child.name}</td>
-                              <td style={{ padding: "6px 10px", fontFamily: "var(--font-mono)", fontSize: "var(--font-size-2xs)", color: "#555", borderBottom: "1px solid #f0f0f0", wordBreak: "break-all" }}>{child.path}</td>
-                              <td style={{ padding: "6px 10px", fontFamily: "var(--font-mono)", fontSize: "var(--font-size-2xs)", color: "#888", borderBottom: "1px solid #f0f0f0" }}>{child.id}</td>
+                            <tr key={child.id} style={{ backgroundColor: i % 2 === 0 ? "var(--color-background)" : "var(--color-muted)" }}>
+                              <td style={{ padding: "var(--spacing-1-5) var(--spacing-2-5)", fontWeight: "var(--font-weight-semibold)", color: "var(--color-foreground)", borderBottom: "1px solid var(--color-border)", wordBreak: "break-word" }}>{child.name}</td>
+                              <td style={{ padding: "var(--spacing-1-5) var(--spacing-2-5)", fontFamily: "var(--font-mono)", fontSize: "var(--font-size-2xs)", color: "hsl(215.4, 16.3%, 40%)", borderBottom: "1px solid var(--color-border)", wordBreak: "break-all" }}>{child.path}</td>
+                              <td style={{ padding: "var(--spacing-1-5) var(--spacing-2-5)", fontFamily: "var(--font-mono)", fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", borderBottom: "1px solid var(--color-border)" }}>{child.id}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -554,10 +554,10 @@ export function DeliveryItemDetailModal({
           {activeTab === "raw" && (
             <>
               {itemLoading && (
-                <div style={{ color: "#999", fontSize: "13px", padding: "16px 18px" }}>Fetching item data…</div>
+                <div style={{ color: "var(--color-muted-foreground)", fontSize: "var(--font-size-sm)", padding: "var(--spacing-5)" }}>Fetching item data…</div>
               )}
               {!itemLoading && !itemRaw && (
-                <div style={{ color: "#e57373", fontSize: "13px", padding: "16px 18px" }}>Failed to fetch item data.</div>
+                <div style={{ color: "var(--color-danger)", fontSize: "var(--font-size-sm)", padding: "var(--spacing-5)" }}>Failed to fetch item data.</div>
               )}
               {!itemLoading && itemRaw && (
                 <JsonBlock data={itemRaw} />
@@ -573,30 +573,30 @@ export function DeliveryItemDetailModal({
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "10px",
-                  padding: "10px 18px",
-                  borderBottom: "1px solid #e8e8e8",
+                  gap: "var(--spacing-2-5)",
+                  padding: "var(--spacing-5)",
+                  borderBottom: "1px solid var(--color-border)",
                   flexShrink: 0,
                   flexWrap: "wrap",
                 }}
               >
-                <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-                  <label style={{ fontSize: "11px", fontWeight: 600, color: "#666", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-1)" }}>
+                  <label style={{ fontSize: "var(--font-size-3xs)", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", textTransform: "uppercase", letterSpacing: "0.4px" }}>
                     Site
                   </label>
                   {layoutSitesLoading ? (
-                    <div style={{ fontSize: "12px", color: "#999", height: "28px", display: "flex", alignItems: "center" }}>Loading sites…</div>
+                    <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-muted-foreground)", height: "28px", display: "flex", alignItems: "center" }}>Loading sites…</div>
                   ) : layoutSites.length > 0 ? (
                     <select
                       value={layoutSite}
                       onChange={(e) => setLayoutSite(e.target.value)}
                       style={{
-                        fontSize: "12px",
-                        padding: "4px 8px",
-                        border: "1px solid #d0d0d0",
-                        borderRadius: "4px",
-                        color: "#222",
-                        backgroundColor: "#fff",
+                        fontSize: "var(--font-size-xs)",
+                        padding: "var(--spacing-1) var(--spacing-2)",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "var(--radius-base)",
+                        color: "var(--color-foreground)",
+                        backgroundColor: "var(--color-background)",
                         height: "28px",
                         minWidth: "160px",
                         cursor: "pointer",
@@ -613,11 +613,11 @@ export function DeliveryItemDetailModal({
                       onChange={(e) => setLayoutSite(e.target.value)}
                       placeholder="e.g. experienceedge"
                       style={{
-                        fontSize: "12px",
-                        padding: "4px 8px",
-                        border: "1px solid #d0d0d0",
-                        borderRadius: "4px",
-                        color: "#222",
+                        fontSize: "var(--font-size-xs)",
+                        padding: "var(--spacing-1) var(--spacing-2)",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "var(--radius-base)",
+                        color: "var(--color-foreground)",
                         height: "28px",
                         minWidth: "160px",
                       }}
@@ -625,8 +625,8 @@ export function DeliveryItemDetailModal({
                   )}
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-                  <label style={{ fontSize: "11px", fontWeight: 600, color: "#666", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-1)" }}>
+                  <label style={{ fontSize: "var(--font-size-3xs)", fontWeight: "var(--font-weight-semibold)", color: "var(--color-muted-foreground)", textTransform: "uppercase", letterSpacing: "0.4px" }}>
                     Language
                   </label>
                   <input
@@ -635,36 +635,36 @@ export function DeliveryItemDetailModal({
                     onChange={(e) => setLayoutLanguage(e.target.value)}
                     disabled={true}
                     style={{
-                      fontSize: "12px",
-                      padding: "0px 8px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "4px",
-                      color: "#aaa",
+                      fontSize: "var(--font-size-xs)",
+                      padding: "0 var(--spacing-2)",
+                      border: "1px solid var(--color-border)",
+                      borderRadius: "var(--radius-base)",
+                      color: "hsl(214.3, 31.8%, 75%)",
                       height: "26px",
                       width: "80px",
                     }}
                   />
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-                  <label style={{ fontSize: "11px", color: "transparent", userSelect: "none" }}>_</label>
+                <div style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-1)" }}>
+                  <label style={{ fontSize: "var(--font-size-3xs)", color: "transparent", userSelect: "none" }}>_</label>
                   <button
                     onClick={runLayoutQuery}
                     disabled={layoutLoading || !layoutSite}
                     style={{
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      padding: "0 16px",
+                      fontSize: "var(--font-size-xs)",
+                      fontWeight: "var(--font-weight-semibold)",
+                      padding: "0 var(--spacing-4)",
                       height: "28px",
                       border: "none",
-                      borderRadius: "4px",
-                      backgroundColor: layoutLoading || !layoutSite ? "#c5d8f7" : "#1976d2",
-                      color: "#fff",
+                      borderRadius: "var(--radius-base)",
+                      backgroundColor: layoutLoading || !layoutSite ? "hsl(221.2, 83.2%, 73.3%)" : "var(--color-info)",
+                      color: "var(--color-info-foreground)",
                       cursor: layoutLoading || !layoutSite ? "not-allowed" : "pointer",
                       transition: "background-color 0.15s",
                     }}
-                    onMouseEnter={(e) => { if (!layoutLoading && layoutSite) e.currentTarget.style.backgroundColor = "#1565c0"; }}
-                    onMouseLeave={(e) => { if (!layoutLoading && layoutSite) e.currentTarget.style.backgroundColor = "#1976d2"; }}
+                    onMouseEnter={(e) => { if (!layoutLoading && layoutSite) e.currentTarget.style.backgroundColor = "hsl(221.2, 83.2%, 48.3%)"; }}
+                    onMouseLeave={(e) => { if (!layoutLoading && layoutSite) e.currentTarget.style.backgroundColor = "var(--color-info)"; }}
                   >
                     {layoutLoading ? "Running…" : "Execute"}
                   </button>
@@ -674,15 +674,15 @@ export function DeliveryItemDetailModal({
               {/* Result area */}
               <div style={{ flex: 1, overflow: "auto" }}>
                 {!layoutLoading && !layoutRaw && !layoutError && (
-                  <div style={{ color: "#bbb", fontSize: "13px", padding: "24px 18px" }}>
+                  <div style={{ color: "hsl(214.3, 31.8%, 75%)", fontSize: "var(--font-size-sm)", padding: "var(--spacing-5)" }}>
                     Select a site and click Execute to fetch layout data.
                   </div>
                 )}
                 {layoutLoading && (
-                  <div style={{ color: "#999", fontSize: "13px", padding: "16px 18px" }}>Fetching layout data…</div>
+                  <div style={{ color: "var(--color-muted-foreground)", fontSize: "var(--font-size-sm)", padding: "var(--spacing-5)" }}>Fetching layout data…</div>
                 )}
                 {!layoutLoading && layoutError && (
-                  <div style={{ color: "#e57373", fontSize: "13px", padding: "16px 18px" }}>{layoutError}</div>
+                  <div style={{ color: "var(--color-danger)", fontSize: "var(--font-size-sm)", padding: "var(--spacing-5)" }}>{layoutError}</div>
                 )}
                 {!layoutLoading && layoutRaw && (
                   <JsonBlock data={layoutRaw} />
