@@ -170,7 +170,7 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
               letterSpacing: "0.025em",
             }}
           >
-            {node.workflow.workflowState.displayName}
+            {node.workflow?.workflowState?.displayName}
           </span>
         )}
         {node.updated && (

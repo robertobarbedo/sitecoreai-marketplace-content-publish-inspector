@@ -280,7 +280,7 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
                     <MetaRow label="Has Children" value={parsedItem.hasChildren} />
                     <MetaRow label="Has Presentation" value={parsedItem.hasPresentation ?? false} />
                     <MetaRow label="Workflow Is Final" value={parsedItem.workflow?.workflowState?.final ?? false} />
-                    <MetaRow label="Workflow State" value={parsedItem.workflow?.workflowState.displayName ?? "—"} />
+                    <MetaRow label="Workflow State" value={parsedItem.workflow?.workflowState?.displayName ?? "—"} />
                   </tbody>
                 </table>
               </section>
