@@ -153,7 +153,7 @@ function TreeNodeItem({ node, depth, expandedIds, loadingIds, onToggle, onHoverC
         >
           {node.name}
         </span>
-        {node.workflow && !node.workflow.workflowState.final && (
+        {node.workflow && !node?.workflow?.workflowState?.final && (
           <span
             style={{
               marginLeft: "var(--spacing-1-5)",
