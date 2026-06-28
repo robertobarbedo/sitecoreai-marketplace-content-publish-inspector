@@ -124,12 +124,13 @@ function FieldsTable({ fields, dim }: { fields: ParsedItemField[]; dim?: boolean
 export interface ItemDetailModalProps {
   node: TreeNode;
   rawData: string | null;
+  queryData: string | null;
   loading: boolean;
   onClose: () => void;
 }
 
-export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailModalProps) {
-  const [activeTab, setActiveTab] = useState<"structured" | "raw">("structured");
+export function ItemDetailModal({ node, rawData, queryData, loading, onClose }: ItemDetailModalProps) {
+  const [activeTab, setActiveTab] = useState<"structured" | "raw" | "query">("structured");
 
   const parsedItem = useMemo<ParsedItem | null>(() => {
     if (!rawData) return null;
@@ -233,6 +234,9 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
             <button style={tabStyle(activeTab === "raw")} onClick={() => setActiveTab("raw")}>
               Raw JSON
             </button>
+            <button style={tabStyle(activeTab === "query")} onClick={() => setActiveTab("query")}>
+              Query
+            </button>
           </div>
         )}
 
@@ -319,6 +323,23 @@ export function ItemDetailModal({ node, rawData, loading, onClose }: ItemDetailM
               }}
             >
               {rawData}
+            </pre>
+          )}
+
+          {!loading && parsedItem && activeTab === "query" && (
+            <pre
+              style={{
+                margin: 0,
+                padding: "var(--spacing-5)",
+                fontSize: "var(--font-size-xs)",
+                lineHeight: "1.6",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                fontFamily: "var(--font-mono)",
+                color: "var(--color-foreground)",
+              }}
+            >
+              {queryData ?? "No query data available."}
             </pre>
           )}
         </div>

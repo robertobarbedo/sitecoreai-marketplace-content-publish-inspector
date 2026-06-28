@@ -23,7 +23,7 @@ export interface DeliveryItemDetailModalProps {
   onClose: () => void;
 }
 
-type ActiveTab = "structured" | "raw" | "layout";
+type ActiveTab = "structured" | "raw" | "query" | "layout";
 
 interface DeliveryItemField {
   name: string;
@@ -155,6 +155,7 @@ export function DeliveryItemDetailModal({
 
   const [itemLoading, setItemLoading] = useState(true);
   const [itemRaw, setItemRaw] = useState<string | null>(null);
+  const [itemQuery, setItemQuery] = useState<string | null>(null);
   const [itemDetail, setItemDetail] = useState<DeliveryItemDetail | null>(null);
 
   const [layoutLoading, setLayoutLoading] = useState(false);
@@ -237,6 +238,8 @@ export function DeliveryItemDetailModal({
           }
         `,
       };
+
+      setItemQuery(JSON.stringify(graphqlQuery, null, 2));
 
       try {
         // Apply rate limiting
@@ -466,6 +469,9 @@ export function DeliveryItemDetailModal({
           <button style={tabStyle(activeTab === "raw")} onClick={() => setActiveTab("raw")}>
             Raw JSON
           </button>
+          <button style={tabStyle(activeTab === "query")} onClick={() => setActiveTab("query")}>
+            Query
+          </button>
           <button style={tabStyle(activeTab === "layout")} onClick={() => setActiveTab("layout")}>
             Layout
           </button>
@@ -576,6 +582,24 @@ export function DeliveryItemDetailModal({
                 <JsonBlock data={itemRaw} />
               )}
             </>
+          )}
+
+          {/* Query */}
+          {activeTab === "query" && (
+            <pre
+              style={{
+                margin: 0,
+                padding: "var(--spacing-5)",
+                fontSize: "var(--font-size-xs)",
+                lineHeight: "1.6",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                fontFamily: "var(--font-mono)",
+                color: "var(--color-foreground)",
+              }}
+            >
+              {itemQuery ?? "No query data available."}
+            </pre>
           )}
 
           {/* Layout Tab */}

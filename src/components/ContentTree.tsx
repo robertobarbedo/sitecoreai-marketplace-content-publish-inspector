@@ -250,6 +250,7 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
   const [error, setError] = useState<string | null>(null);
   const [modalNode, setModalNode] = useState<TreeNode | null>(null);
   const [modalData, setModalData] = useState<string | null>(null);
+  const [modalQuery, setModalQuery] = useState<string | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -603,6 +604,7 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
     async (node: TreeNode) => {
       setModalNode(node);
       setModalData(null);
+      setModalQuery(null);
       setModalLoading(true);
 
       const sitecoreContextId = getSitecoreContextId();
@@ -646,6 +648,8 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
           }
         `,
       };
+
+      setModalQuery(JSON.stringify(graphqlQuery, null, 2));
 
       try {
         // Apply rate limiting
@@ -895,6 +899,7 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
         <ItemDetailModal
           node={modalNode}
           rawData={modalData}
+          queryData={modalQuery}
           loading={modalLoading}
           onClose={handleCloseModal}
         />
