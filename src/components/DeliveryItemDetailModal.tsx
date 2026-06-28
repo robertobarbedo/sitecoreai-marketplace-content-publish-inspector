@@ -239,7 +239,15 @@ export function DeliveryItemDetailModal({
         `,
       };
 
-      setItemQuery(JSON.stringify(graphqlQuery, null, 2));
+      {
+        const raw = graphqlQuery.query;
+        const lines = raw.split("\n");
+        const nonEmpty = lines.filter((l) => l.trim());
+        const indent = nonEmpty.length
+          ? Math.min(...nonEmpty.map((l) => (l.match(/^(\s*)/) || ["", ""])[1].length))
+          : 0;
+        setItemQuery(lines.map((l) => l.slice(indent)).join("\n").trim());
+      }
 
       try {
         // Apply rate limiting
