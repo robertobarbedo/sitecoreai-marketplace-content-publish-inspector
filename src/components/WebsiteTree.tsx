@@ -520,6 +520,7 @@ export function WebsiteTree({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settings, setSettings] = useState<UpdatedSourceSettings>(DEFAULT_SETTINGS);
   const settingsRef = useRef<UpdatedSourceSettings>(DEFAULT_SETTINGS);
+  const [isLoadingPages, setIsLoadingPages] = useState(false);
 
   // Configure rate limiter when config changes
   useEffect(() => {
@@ -631,6 +632,34 @@ export function WebsiteTree({
   useEffect(() => {
     if (!authoringTree || sites.length === 0 || !liveTree) return;
 
+    // Count total URLs to process
+    let totalUrls = 0;
+    function countUrls(node: TreeNode) {
+      const pathLower = node.path.toLowerCase();
+      const isInSite = sites.some(
+        (s) => s.rootPath && pathLower.startsWith(s.rootPath.toLowerCase())
+      );
+      if (isInSite && node.hasPresentation) {
+        const liveNode = liveMap.get(pathLower);
+        const url = liveNode?.url;
+        if (url && !processedUrlsRef.current.has(url)) {
+          totalUrls++;
+        }
+      }
+      if (node.children) {
+        for (const child of node.children) countUrls(child);
+      }
+    }
+    countUrls(authoringTree);
+    
+    if (totalUrls === 0) {
+      setIsLoadingPages(false);
+      return;
+    }
+    
+    setIsLoadingPages(true);
+    let completedUrls = 0;
+
     function walk(node: TreeNode) {
       const pathLower = node.path.toLowerCase();
       const isInSite = sites.some(
@@ -678,6 +707,11 @@ export function WebsiteTree({
             error: String(err),
           })
         );
+      } finally {
+        completedUrls++;
+        if (completedUrls >= totalUrls) {
+          setIsLoadingPages(false);
+        }
       }
     }
 
@@ -685,6 +719,7 @@ export function WebsiteTree({
   }, [authoringTree, liveTree, sites, liveMap, refreshTrigger]);
 
   const hasData = authoringTree && sites.length > 0;
+  const isLoading = sitesLoading || !authoringTree || !previewTree || !liveTree || isLoadingPages;
 
   return (
     <div
@@ -709,7 +744,10 @@ export function WebsiteTree({
           gap: "var(--spacing-2)",
         }}
       >
-        <span>Website</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-2)" }}>
+          <span>Website</span>
+          {isLoading && <Icon path={mdiAutorenew} size={16} color="hsl(215.4, 16.3%, 46.9%)" spin />}
+        </div>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-1)" }}>
           <span
             onClick={() => setSettingsOpen(true)}

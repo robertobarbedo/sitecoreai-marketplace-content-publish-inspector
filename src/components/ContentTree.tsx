@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import type { ClientSDK, ApplicationContext } from "@sitecore-marketplace-sdk/client";
 import { Icon } from "./Icon";
-import { mdiFileOutline, mdiMagnify, mdiClose } from "@mdi/js";
+import { mdiFileOutline, mdiMagnify, mdiClose, mdiAutorenew } from "@mdi/js";
 import { ItemDetailModal } from "./ItemDetailModal";
 import { getClientRateLimiter, configureClientRateLimit } from "../utils/rateLimit";
 import { useAppConfig } from "../utils/hooks/useAppConfig";
@@ -251,6 +251,7 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
   const [modalNode, setModalNode] = useState<TreeNode | null>(null);
   const [modalData, setModalData] = useState<string | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Configure rate limiter when config changes
   useEffect(() => {
@@ -702,11 +703,15 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
     const target = customRoot ?? rootItemId ?? "{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}";
     const isPath = target.startsWith("/");
     const fetcher = isPath ? fetchItemByPath(target) : fetchItem(target);
     fetcher.then((item) => {
       if (item) setRootNode(item);
+      setIsLoading(false);
+    }).catch(() => {
+      setIsLoading(false);
     });
   }, [customRoot, rootItemId, fetchItem, fetchItemByPath]);
 
@@ -734,7 +739,10 @@ export function ContentTree({ client, appContext, rootItemId, onTreeUpdate, onLa
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span>Authoring API</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-2)" }}>
+            <span>Authoring API</span>
+            {isLoading && <Icon path={mdiAutorenew} size={16} color="hsl(215.4, 16.3%, 46.9%)" spin />}
+          </div>
           <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-1)" }}>
             <select
               value={selectedLanguage}

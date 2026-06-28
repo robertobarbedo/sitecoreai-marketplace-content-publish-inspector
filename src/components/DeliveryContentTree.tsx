@@ -217,6 +217,7 @@ export function DeliveryContentTree({
   const deliveryTreeLangRef = useRef<string>(language);
   const [error, setError] = useState<string | null>(null);
   const [modalNode, setModalNode] = useState<DeliveryNode | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Configure rate limiter when config changes
   useEffect(() => {
@@ -347,10 +348,12 @@ export function DeliveryContentTree({
       deliveryTreeRef.current = null;
       setDeliveryTree(null);
       onDeliveryTreeUpdate?.(null);
+      setIsLoading(false);
       return;
     }
 
     let cancelled = false;
+    setIsLoading(true);
 
     async function buildDeliveryTree(
       authoringNode: TreeNode,
@@ -390,11 +393,13 @@ export function DeliveryContentTree({
           deliveryTreeLangRef.current = language;
           setDeliveryTree(tree);
           onDeliveryTreeUpdate?.(tree);
+          setIsLoading(false);
         }
       })
       .catch((err) => {
         if (!cancelled && String(err) !== "Error: cancelled") {
           setError(String(err));
+          setIsLoading(false);
         }
       });
 
@@ -426,7 +431,10 @@ export function DeliveryContentTree({
           gap: "var(--spacing-2)",
         }}
       >
-        <span>{label}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--spacing-2)" }}>
+          <span>{label}</span>
+          {isLoading && <Icon path={mdiAutorenew} size={16} color="hsl(215.4, 16.3%, 46.9%)" spin />}
+        </div>
       </div>
       <div style={{ padding: "var(--spacing-1) 0" }}>
         {error && (
