@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last Updated: March 19, 2026**
+**Last Updated: July 13, 2026**
 
 ## Overview
 
@@ -8,15 +8,21 @@ The Publish Inspector is committed to protecting your privacy. This privacy poli
 
 ## Data Collection
 
-**We collect absolutely no data from users.**
+**We collect anonymous usage analytics only.**
+
+This application uses Google Analytics to collect basic, anonymous usage
+metrics: page loads and an "app initialized" event, together with the
+standard technical information Google Analytics gathers (browser type,
+approximate location derived from IP, device category).
 
 This application:
 - Does **NOT** collect any personal information
-- Does **NOT** collect any usage analytics or telemetry
-- Does **NOT** track user behavior
-- Does **NOT** store any user data on external servers
-- Does **NOT** use cookies or tracking technologies
-- Does **NOT** share any information with third parties
+- Does **NOT** send any of your Sitecore content, item data, or credentials
+  to analytics — analytics events contain no content data whatsoever
+- Does **NOT** store any user data on external servers beyond the anonymous
+  Google Analytics metrics described above
+- Does **NOT** share any information with third parties other than Google
+  Analytics as described above
 
 ## How the Application Works
 
@@ -48,7 +54,12 @@ All API requests are made directly from your browser to your Sitecore instance. 
 
 ## Third-Party Services
 
-This application does not integrate with any third-party analytics, tracking, or advertising services.
+This application uses **Google Analytics** for anonymous usage measurement
+(page views and app-load events). Google Analytics may set cookies in the
+application's iframe for this purpose. See Google's privacy policy at
+https://policies.google.com/privacy for details on how Google processes this
+data. No other third-party analytics, tracking, or advertising services are
+used.
 
 ## Changes to This Policy
 
@@ -60,4 +71,4 @@ If you have any questions about this privacy policy, please open an issue in the
 
 ## Your Rights
 
-Since we collect no data, there is no personal information to request, modify, or delete. You have complete control over any local preferences stored in your browser.
+Beyond the anonymous usage metrics described above, we collect no data, and there is no personal information to request, modify, or delete. You have complete control over any local preferences stored in your browser.
