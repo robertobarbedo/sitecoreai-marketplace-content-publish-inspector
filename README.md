@@ -142,19 +142,19 @@ npm start          # serves on port 5000
 Deploy to Vercel or any Node.js host that runs Next.js, then point the App
 Studio deployment URL at it.
 
-Environment variables (create `.env.local` locally, or set them in your
-host's project settings):
+Environment variables (copy `.env.example` to `.env.local` locally, or set
+them in your host's project settings):
 
 | Variable | Required | Description |
 | --- | --- | --- |
 | `NEXT_PUBLIC_AUTH0_CLIENT_ID` | Yes | Client ID of the app's SPA client credentials from the Cloud Portal. If missing, the Website column shows "Sign-in is not configured" and `/api/fetch-page` returns 500. Inlined at build time. |
 | `NEXT_PUBLIC_SITECORE_APP_ID` | Yes | Marketplace app ID; sent as `product_codes=mkp_<id>` at sign-in. Inlined at build time. |
 | `RATE_LIMIT_PER_SECOND` | No | Requests per second for GraphQL queries and page fetches. Default `30`. Server-side; served to the browser by `/api/config`. |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | No | Google Analytics 4 measurement ID (`G-XXXXXXXXXX`). Leave empty to disable analytics. Inlined at build time. |
 | `NEXT_PUBLIC_AUTH0_DOMAIN` | No | Default `auth.sitecorecloud.io`. |
 | `NEXT_PUBLIC_AUTH0_AUDIENCE` | No | Default `https://api-webapp.sitecorecloud.io`. |
 | `NEXT_PUBLIC_AUTH0_SCOPE` | No | Default `openid profile email offline_access`. |
 | `AUTH0_ISSUER` | No | Server-only. Token issuer; defaults to `https://<NEXT_PUBLIC_AUTH0_DOMAIN>/`. |
+| `CSP_FRAME_ANCESTORS` | No | Space-separated CSP sources allowed to embed the app in a frame (`Content-Security-Policy: frame-ancestors`). Default `'self' https://*.sitecorecloud.io`. |
 
 There are no server-side secrets. All `NEXT_PUBLIC_*` values are public
 identifiers; change them, then rebuild.
@@ -186,8 +186,14 @@ written to the Sitecore content tree.
 - **Refresh** (Website header) — re-fetches all pages with the current
   settings.
 
-The rate limit is set by `RATE_LIMIT_PER_SECOND` on the server; see
-[RATE_LIMITING.md](RATE_LIMITING.md).
+**Rate limit.** `RATE_LIMIT_PER_SECOND` (default `30`) sets a token-bucket
+limiter: each GraphQL query and page fetch takes one token, and requests
+beyond the limit are queued, not dropped. The browser reads the value from
+`/api/config` and applies one shared limiter to all GraphQL queries and page
+fetch requests; `/api/fetch-page` applies the same limit on the server (per
+server instance). Lower it if Sitecore or your website returns
+429 (Too Many Requests); raise it for faster loading of large trees. Restart
+or redeploy after changing it.
 
 ## Security and privacy
 
@@ -197,7 +203,9 @@ The rate limit is set by `RATE_LIMIT_PER_SECOND` on the server; see
 - **Sign-in on the API:** `/api/fetch-page` requires a Sitecore Cloud access
   token. The server verifies its signature (RS256, issuer's JWKS), issuer,
   audience, expiry and that it was issued to this app's client ID (`azp`).
-  `/api/config` is unauthenticated and returns only the rate limit number.
+- **Public config route:** `/api/config` is intentionally unauthenticated.
+  It returns only the rate limit number (`{ "rateLimit": 30 }`), which the
+  browser needs before sign-in, and reads no request data.
 - **Secrets:** none. Auth0 access and refresh tokens are kept in the
   browser's `localStorage` (third-party cookies are blocked in the
   Marketplace iframe), together with the current organization ID so a switch
@@ -207,18 +215,27 @@ The rate limit is set by `RATE_LIMIT_PER_SECOND` on the server; see
   - Page URLs from the Live endpoint are sent to the app's own server, which
     requests those pages from your website with the user agent
     `Mozilla/5.0 (compatible; SitecoreChecker/1.0)`. Only the status code and
-    the timestamp value are returned; nothing is stored.
-  - If `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set, Google Analytics receives page
-    views and a `marketplace_client_ready` event tagged with the app name. No
-    content data is sent.
+    the timestamp value are returned. The page content and URL path are not
+    stored; the audit log keeps only the host name and status code.
+  - No analytics, tracking or advertising services are used.
 - **SSRF protection on `/api/fetch-page`:** only `http`/`https` on ports 80
   and 443, no credentials in the URL, and the host must resolve only to public
   addresses (private, loopback, link-local, CGNAT, multicast and reserved
   ranges are blocked). Redirects are followed manually and every hop is
   re-checked. Requests time out after 15 seconds and at most 2 MB of the body
   is read.
+- **Security headers:** every response sends HSTS,
+  `Content-Security-Policy: frame-ancestors` (only SitecoreAI may embed the
+  app, configurable with `CSP_FRAME_ANCESTORS`), `X-Content-Type-Options`,
+  `Referrer-Policy` and `Permissions-Policy`; API responses are sent with
+  `Cache-Control: no-store`.
+- **Audit log:** sign-in decisions on the API and every website fetch are
+  written as JSON audit lines (UTC timestamps) to the server log: event,
+  outcome, user ID, organization ID and, for fetches, the target host name
+  and HTTP status. No tokens, secrets, page paths or content are logged.
 
-See [PRIVACY.md](PRIVACY.md) for the privacy policy.
+See the [Privacy policy](PRIVACY.md), [Terms of service](TERMS.md),
+[Data usage disclosure](DATA-USAGE.md) and [Security policy](SECURITY.md).
 
 ## Limitations
 
@@ -242,7 +259,8 @@ See [PRIVACY.md](PRIVACY.md) for the privacy policy.
 
 - Next.js 16 (App Router), React 19, TypeScript, plain CSS with design tokens
   in `src/app/globals.css`, Material Design Icons (`@mdi/js`).
-- Sitecore Marketplace SDK 0.2 (`client` and `xmc` modules).
+- Sitecore Marketplace SDK (`@sitecore-marketplace-sdk/client` 0.4,
+  `@sitecore-marketplace-sdk/xmc` 0.4).
 - `@auth0/auth0-react` and `jose` for the custom-authorization kit.
 - Dev server: `npm run dev` on port 5000.
 
@@ -250,7 +268,7 @@ Project structure:
 
 ```
 src/app/          Page, layout and API routes (/api/config, /api/fetch-page)
-src/components/   Tree columns, item detail modals, analytics
+src/components/   Tree columns, item detail modals
 src/lib/          marketplace-auth kit (sign-in and token verification)
 src/utils/        Marketplace client hook, rate limiter, SSRF guard
 public/           App icon
@@ -258,15 +276,18 @@ public/           App icon
 
 Further reading:
 
-- [RATE_LIMITING.md](RATE_LIMITING.md) — how the rate limiter works
 - [src/lib/marketplace-auth/README.md](src/lib/marketplace-auth/README.md) —
   the custom-authorization kit and Cloud Portal setup
-- [PRIVACY.md](PRIVACY.md) — privacy policy
+- [PRIVACY.md](PRIVACY.md), [TERMS.md](TERMS.md),
+  [DATA-USAGE.md](DATA-USAGE.md), [SECURITY.md](SECURITY.md) — policies
 
 ## Support
 
-Report bugs and request features by opening an issue in this repository.
-This is a community app and is not an official Sitecore product.
+Report bugs and request features in
+[GitHub Issues](https://github.com/robertobarbedo/sitecoreai-marketplace-content-publish-inspector/issues).
+Report security vulnerabilities privately as described in the
+[Security policy](SECURITY.md). This is a community app and is not an
+official Sitecore product.
 
 ## License
 

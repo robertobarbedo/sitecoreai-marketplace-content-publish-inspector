@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { globalRateLimiter } from "../../../utils/rateLimit";
-import { describeRequestError, safeRequest } from "../../../utils/ssrfGuard";
+import { BlockedUrlError, describeRequestError, safeRequest } from "../../../utils/ssrfGuard";
 import { requireSitecoreUser } from "../../../lib/marketplace-auth/server";
+import { auditLog } from "../../../lib/marketplace-auth/audit-log";
 
 const MAX_REDIRECTS = 5;
 const MAX_BODY_BYTES = 2 * 1024 * 1024;
+
+// Host only: the path and query of a customer's page are not logged
+function targetHost(url: string): string | undefined {
+  try {
+    return new URL(url).hostname || undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 function extractMetaValue(html: string, metaName: string): string | null {
   const metaPattern = /<meta\s+([^>]*)>/gi;
@@ -48,6 +58,12 @@ export async function POST(request: NextRequest) {
   const source = body.source === "header" ? "header" : "meta";
   const name = typeof body.name === "string" && body.name ? body.name : "Last-Modified";
   const followRedirect = body.followRedirect === true;
+  const audit = {
+    event: "website.fetch",
+    sub: auth.user.sub,
+    org: auth.user.organizationId,
+    targetHost: targetHost(url),
+  };
 
   try {
     // Apply rate limiting on server side
@@ -74,8 +90,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    auditLog(request, { ...audit, outcome: "allow", targetStatus: status });
     return NextResponse.json({ status, updated });
   } catch (err) {
+    auditLog(request, {
+      ...audit,
+      outcome: err instanceof BlockedUrlError ? "deny" : "error",
+      reason: describeRequestError(err),
+    });
     return NextResponse.json({
       status: 0,
       updated: null,
