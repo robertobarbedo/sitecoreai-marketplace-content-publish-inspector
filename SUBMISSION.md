@@ -1,7 +1,7 @@
 # Marketplace submission: Content Publish Inspector
 
 Copy-paste text for Sitecore's public-app submission form, in form order.
-Replace every `{{...}}` placeholder before submitting.
+Replace `{{APP_URL}}` with the production deployment URL before submitting.
 
 ## 1. App name
 
@@ -64,7 +64,7 @@ PNG, shown as 600×900 thumbnails. Capture during live QA. The existing images i
 
 ## 8. Data usage disclosure
 
-Paste from `DATA-USAGE.md` (replace `rb205@proton.me` in it first).
+Paste from `DATA-USAGE.md`.
 
 Summary: Sitecore content is read through the Marketplace SDK with the user's own permissions and is held only in browser memory; nothing is written to Sitecore and there is no database. Page URLs are sent to the app's own signed-in `/api/fetch-page` route, which fetches the public page and returns only the HTTP status and timestamp. Server audit logs (user ID, organization ID, target host name, status, no content or tokens) are kept for 90 days; sign-in tokens and preferences stay in the browser's localStorage.
 
@@ -111,5 +111,5 @@ Next.js lists sharp (LGPL-3.0 libvips) as an optional dependency for image optim
 - [ ] Production client credentials created with the production callback, logout, web origin and CORS URLs (`{{APP_URL}}`)
 - [ ] `NEXT_PUBLIC_AUTH0_CLIENT_ID` and `NEXT_PUBLIC_SITECORE_APP_ID` set on the production host and the app rebuilt
 - [ ] Screenshots captured (PNG) and checked against the current UI
-- [ ] `rb205@proton.me` replaced in `DATA-USAGE.md`, `PRIVACY.md`, `TERMS.md` and `SECURITY.md`; `Roberto Barbedo`, `rb205@proton.me` and `{{APP_URL}}` replaced in this form
+- [ ] `{{APP_URL}}` replaced with the production deployment URL in this form
 - [ ] PRIVACY.md and TERMS.md links open on GitHub (`main` branch)
