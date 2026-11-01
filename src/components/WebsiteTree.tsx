@@ -1066,8 +1066,8 @@ export function WebsiteTree({
             </div>
             <div
               style={{
-                textAlign: "center",
-                fontSize: "var(--font-size-xs)",
+                textAlign: "left",
+                fontSize: "10px",
                 color: "var(--color-muted-foreground)",
                 padding: "var(--spacing-3) var(--spacing-5)",
                 borderTop: "1px solid var(--color-border)",
