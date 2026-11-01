@@ -113,7 +113,7 @@ unchanged for the timestamp check to work. Redirect handling treats items named
 5. Set **Deployment URL** to your deployment, for example
    `https://<your-deployment>/`. A public deployment is available at
    `https://content-publish-inspector.vercel.app/`.
-6. Upload the app logo from [`public/icon.png`](public/icon.png).
+6. Upload the app logo from [`public/list-magnifying-glass-duotone.svg`](public/list-magnifying-glass-duotone.svg).
 7. Enable custom authorization and create **client credentials** of type
    **Single-page app**. Register your deployment origin (no path) as:
    - Allowed callback URL, with a trailing slash:

@@ -85,7 +85,7 @@ Off. The app does not use AI or machine learning.
   - `NEXT_PUBLIC_AUTH0_CLIENT_ID` (required): client ID of the SPA client credentials
   - `NEXT_PUBLIC_SITECORE_APP_ID` (required): Marketplace app ID
   - Optional: `RATE_LIMIT_PER_SECOND` (default 30), `NEXT_PUBLIC_AUTH0_DOMAIN`, `NEXT_PUBLIC_AUTH0_AUDIENCE`, `NEXT_PUBLIC_AUTH0_SCOPE`, `AUTH0_ISSUER`, `CSP_FRAME_ANCESTORS`
-- App logo: `public/icon.png`
+- App logo: `public/list-magnifying-glass-duotone.svg`
 
 ## 11. Submission details (visible only to Sitecore)
 
