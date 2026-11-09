@@ -34,6 +34,8 @@ interface UpdatedSourceSettings {
   /** Extra request header sent with every page check (e.g. Vercel Deployment Protection bypass). */
   requestHeaderName: string;
   requestHeaderValue: string;
+  /** Vercel Password Protection: the visitor password of the protected deployment. */
+  vercelPassword: string;
 }
 
 const DEFAULT_REQUEST_HEADER_NAME = "x-vercel-protection-bypass";
@@ -46,6 +48,7 @@ const DEFAULT_SETTINGS: UpdatedSourceSettings = {
   followRedirectOtherPages: false,
   requestHeaderName: DEFAULT_REQUEST_HEADER_NAME,
   requestHeaderValue: "",
+  vercelPassword: "",
 };
 
 function loadSettings(appContext?: ApplicationContext): UpdatedSourceSettings {
@@ -71,6 +74,9 @@ function loadSettings(appContext?: ApplicationContext): UpdatedSourceSettings {
             : DEFAULT_REQUEST_HEADER_NAME,
           requestHeaderValue: typeof parsed.requestHeaderValue === "string"
             ? parsed.requestHeaderValue
+            : "",
+          vercelPassword: typeof parsed.vercelPassword === "string"
+            ? parsed.vercelPassword
             : "",
         };
       }
@@ -705,10 +711,11 @@ export function WebsiteTree({
         const headerName = s.requestHeaderName.trim();
         const headerValue = s.requestHeaderValue.trim();
         const requestHeader = headerName && headerValue ? { name: headerName, value: headerValue } : undefined;
+        const vercelPassword = s.vercelPassword.trim() || undefined;
         const res = await authedFetch("/api/fetch-page", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: adjustedUrl, source: s.source, name: s.name, followRedirect, requestHeader }),
+          body: JSON.stringify({ url: adjustedUrl, source: s.source, name: s.name, followRedirect, requestHeader, vercelPassword }),
         });
         const data = await res.json();
         setFetchResults((prev) =>
@@ -1080,6 +1087,36 @@ export function WebsiteTree({
                 Controls whether URLs should have a trailing slash when fetching pages. Files with extensions are not modified.
               </div>
               <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginTop: "var(--spacing-5)", marginBottom: "var(--spacing-1-5)" }}>
+                Vercel Password
+              </div>
+              <input
+                type="password"
+                autoComplete="off"
+                value={settings.vercelPassword}
+                onChange={(e) => {
+                  const next: UpdatedSourceSettings = { ...settings, vercelPassword: e.target.value };
+                  setSettings(next);
+                  settingsRef.current = next;
+                  saveSettings(next, appContext);
+                }}
+                style={{
+                  width: "100%",
+                  fontSize: "var(--font-size-xs)",
+                  padding: "var(--spacing-1-5) var(--spacing-2-5)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--color-foreground)",
+                  fontFamily: "var(--font-mono)",
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-ring)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border)"; }}
+              />
+              <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginTop: "var(--spacing-1-5)" }}>
+                For a site behind Vercel&apos;s Password Protection (the &quot;Password Protected&quot; page). The app signs in with this password once per site and sends the resulting cookie with each page check, only to the page&apos;s own origin. Leave empty if the site is not password protected.
+              </div>
+              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginTop: "var(--spacing-5)", marginBottom: "var(--spacing-1-5)" }}>
                 Request Header Name
               </div>
               <input
@@ -1134,7 +1171,7 @@ export function WebsiteTree({
                 onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border)"; }}
               />
               <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginTop: "var(--spacing-1-5)" }}>
-                Optional header sent with every page check. For a site behind Vercel&apos;s Deployment Protection, keep the name x-vercel-protection-bypass and paste the bypass secret as the value. The header is only sent to the page&apos;s own origin, never to a redirect target on another host. Leave the value empty if the site is not protected.
+                Optional header sent with every page check. For a site behind Vercel&apos;s Deployment Protection, keep the name x-vercel-protection-bypass and paste the &quot;Protection Bypass for Automation&quot; secret as the value (not the visitor password; use Vercel Password for that). The header is only sent to the page&apos;s own origin, never to a redirect target on another host. Leave the value empty if the site is not protected.
               </div>
             </div>
             <div

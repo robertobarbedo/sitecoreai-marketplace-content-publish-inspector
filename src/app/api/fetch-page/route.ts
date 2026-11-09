@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { globalRateLimiter } from "../../../utils/rateLimit";
-import { BlockedUrlError, describeRequestError, safeRequest } from "../../../utils/ssrfGuard";
+import { BlockedUrlError, describeRequestError, parseSafeUrl, safeRequest } from "../../../utils/ssrfGuard";
+import { getVercelPasswordCookie, VercelPasswordError } from "../../../utils/vercelPassword";
 import { requireSitecoreUser } from "../../../lib/marketplace-auth/server";
 import { auditLog } from "../../../lib/marketplace-auth/audit-log";
 
@@ -37,6 +38,7 @@ interface FetchPageBody {
   name?: unknown;
   followRedirect?: unknown;
   requestHeader?: unknown;
+  vercelPassword?: unknown;
 }
 
 // RFC 9110 field-name token
@@ -60,6 +62,22 @@ function parseRequestHeader(raw: unknown): RequestHeaderResult {
   if (!HEADER_NAME_RE.test(headerName)) return { ok: false, error: "Invalid request header name" };
   if (!HEADER_VALUE_RE.test(headerValue)) return { ok: false, error: "Invalid request header value" };
   return { ok: true, header: { [headerName]: headerValue } };
+}
+
+// Printable ASCII only (no CR/LF or other controls)
+const VERCEL_PASSWORD_RE = /^[\x20-\x7e]{1,256}$/;
+
+/** Merges the Vercel login cookie into the caller's headers (keeps a custom Cookie header). */
+function withCookie(headers: Record<string, string> | undefined, cookie: string | undefined) {
+  if (!cookie) return headers;
+  const merged: Record<string, string> = { ...headers };
+  const existing = Object.keys(merged).find((k) => k.toLowerCase() === "cookie");
+  if (existing) {
+    merged[existing] = `${merged[existing]}; ${cookie}`;
+  } else {
+    merged.Cookie = cookie;
+  }
+  return merged;
 }
 
 // POST so the page URL travels in the body, never in request logs
@@ -86,6 +104,10 @@ export async function POST(request: NextRequest) {
   if (!requestHeader.ok) {
     return NextResponse.json({ error: requestHeader.error }, { status: 400 });
   }
+  const vercelPassword = typeof body.vercelPassword === "string" ? body.vercelPassword.trim() : "";
+  if (vercelPassword && !VERCEL_PASSWORD_RE.test(vercelPassword)) {
+    return NextResponse.json({ error: "Invalid Vercel password" }, { status: 400 });
+  }
   const audit = {
     event: "website.fetch",
     sub: auth.user.sub,
@@ -99,15 +121,26 @@ export async function POST(request: NextRequest) {
 
     // SSRF-guarded: public hosts only, checked at connect time, every
     // redirect hop re-checked, body capped (meta tags live in <head>)
-    const { response } = await safeRequest(url, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; SitecoreChecker/1.0)" },
-      // Secret-bearing: sent only while the request stays on the page's origin
-      originHeaders: requestHeader.header,
-      timeoutMs: 15000,
-      maxBodyBytes: MAX_BODY_BYTES,
-      maxRedirects: followRedirect ? MAX_REDIRECTS : 0,
-      skipBody: source === "header",
-    });
+    const fetchPage = (cookie?: string) =>
+      safeRequest(url, {
+        headers: { "User-Agent": "Mozilla/5.0 (compatible; SitecoreChecker/1.0)" },
+        // Secret-bearing: sent only while the request stays on the page's origin
+        originHeaders: withCookie(requestHeader.header, cookie),
+        timeoutMs: 15000,
+        maxBodyBytes: MAX_BODY_BYTES,
+        maxRedirects: followRedirect ? MAX_REDIRECTS : 0,
+        skipBody: source === "header",
+      });
+
+    // Vercel Password Protection: log in once per origin, reuse the cookie
+    const origin = vercelPassword ? parseSafeUrl(url).origin : "";
+    let cookie = vercelPassword ? await getVercelPasswordCookie(origin, vercelPassword) : undefined;
+    let { response } = await fetchPage(cookie);
+    if (vercelPassword && response.status === 401) {
+      // The cached cookie may have expired or been revoked: log in again once
+      cookie = await getVercelPasswordCookie(origin, vercelPassword, { fresh: true });
+      ({ response } = await fetchPage(cookie));
+    }
 
     const status = response.status;
     let updated: string | null = null;
@@ -126,12 +159,13 @@ export async function POST(request: NextRequest) {
     auditLog(request, {
       ...audit,
       outcome: err instanceof BlockedUrlError ? "deny" : "error",
-      reason: describeRequestError(err),
+      reason: err instanceof VercelPasswordError ? err.message : describeRequestError(err),
     });
+    const error = err instanceof VercelPasswordError ? err.message : describeRequestError(err);
     return NextResponse.json({
       status: 0,
       updated: null,
-      error: describeRequestError(err),
+      error,
     });
   }
 }

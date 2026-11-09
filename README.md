@@ -183,10 +183,16 @@ written to the Sitecore content tree.
     other pages (default off), up to 5 hops.
   - Trailing slash: leave as is (default), always add, or always remove.
     URLs with a file extension are left unchanged.
+  - Vercel password: for a site behind Vercel's **Password Protection**.
+    The server signs in through the site's password form once per site
+    (cached for an hour, re-done on a 401) and sends the resulting
+    `_vercel_jwt` cookie with each page check, only to the page's own
+    origin. The password and cookie are never logged.
   - Request header: an optional header sent with every page check (name
     default `x-vercel-protection-bypass`, value empty = no header). For a site
-    behind Vercel's Deployment Protection, paste the bypass secret as the
-    value. The header is sent only to the page's own origin, never to a
+    behind Vercel's Deployment Protection, paste the "Protection Bypass for
+    Automation" secret as the value (not the visitor password — use the
+    Vercel password setting for that). The header is sent only to the page's own origin, never to a
     redirect target on another host, and is never logged. Like the other
     settings it is kept in this browser's `localStorage`.
 - **Refresh** (Website header) — re-fetches all pages with the current
