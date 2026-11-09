@@ -36,6 +36,30 @@ interface FetchPageBody {
   source?: unknown;
   name?: unknown;
   followRedirect?: unknown;
+  requestHeader?: unknown;
+}
+
+// RFC 9110 field-name token
+const HEADER_NAME_RE = /^[!#$%&'*+.^_`|~0-9A-Za-z-]{1,100}$/;
+// Visible ASCII, space and tab only: no CR/LF (header injection) or other controls
+const HEADER_VALUE_RE = /^[\t\x20-\x7e]{1,2048}$/;
+
+type RequestHeaderResult = { ok: true; header?: Record<string, string> } | { ok: false; error: string };
+
+// Optional extra header (e.g. x-vercel-protection-bypass). Never logged.
+function parseRequestHeader(raw: unknown): RequestHeaderResult {
+  if (raw === undefined || raw === null) return { ok: true };
+  if (typeof raw !== "object") return { ok: false, error: "Invalid requestHeader" };
+  const { name, value } = raw as { name?: unknown; value?: unknown };
+  if (typeof name !== "string" || typeof value !== "string") {
+    return { ok: false, error: "Invalid requestHeader" };
+  }
+  const headerName = name.trim();
+  const headerValue = value.trim();
+  if (!headerName || !headerValue) return { ok: true };
+  if (!HEADER_NAME_RE.test(headerName)) return { ok: false, error: "Invalid request header name" };
+  if (!HEADER_VALUE_RE.test(headerValue)) return { ok: false, error: "Invalid request header value" };
+  return { ok: true, header: { [headerName]: headerValue } };
 }
 
 // POST so the page URL travels in the body, never in request logs
@@ -58,6 +82,10 @@ export async function POST(request: NextRequest) {
   const source = body.source === "header" ? "header" : "meta";
   const name = typeof body.name === "string" && body.name ? body.name : "Last-Modified";
   const followRedirect = body.followRedirect === true;
+  const requestHeader = parseRequestHeader(body.requestHeader);
+  if (!requestHeader.ok) {
+    return NextResponse.json({ error: requestHeader.error }, { status: 400 });
+  }
   const audit = {
     event: "website.fetch",
     sub: auth.user.sub,
@@ -73,6 +101,8 @@ export async function POST(request: NextRequest) {
     // redirect hop re-checked, body capped (meta tags live in <head>)
     const { response } = await safeRequest(url, {
       headers: { "User-Agent": "Mozilla/5.0 (compatible; SitecoreChecker/1.0)" },
+      // Secret-bearing: sent only while the request stays on the page's origin
+      originHeaders: requestHeader.header,
       timeoutMs: 15000,
       maxBodyBytes: MAX_BODY_BYTES,
       maxRedirects: followRedirect ? MAX_REDIRECTS : 0,

@@ -183,6 +183,12 @@ written to the Sitecore content tree.
     other pages (default off), up to 5 hops.
   - Trailing slash: leave as is (default), always add, or always remove.
     URLs with a file extension are left unchanged.
+  - Request header: an optional header sent with every page check (name
+    default `x-vercel-protection-bypass`, value empty = no header). For a site
+    behind Vercel's Deployment Protection, paste the bypass secret as the
+    value. The header is sent only to the page's own origin, never to a
+    redirect target on another host, and is never logged. Like the other
+    settings it is kept in this browser's `localStorage`.
 - **Refresh** (Website header) — re-fetches all pages with the current
   settings.
 

@@ -31,14 +31,21 @@ interface UpdatedSourceSettings {
   trailingSlash: "as-is" | "add" | "remove";
   followRedirectHomepage: boolean;
   followRedirectOtherPages: boolean;
+  /** Extra request header sent with every page check (e.g. Vercel Deployment Protection bypass). */
+  requestHeaderName: string;
+  requestHeaderValue: string;
 }
+
+const DEFAULT_REQUEST_HEADER_NAME = "x-vercel-protection-bypass";
 
 const DEFAULT_SETTINGS: UpdatedSourceSettings = { 
   source: "meta", 
   name: "Last-Modified",
   trailingSlash: "as-is",
   followRedirectHomepage: true,
-  followRedirectOtherPages: false
+  followRedirectOtherPages: false,
+  requestHeaderName: DEFAULT_REQUEST_HEADER_NAME,
+  requestHeaderValue: "",
 };
 
 function loadSettings(appContext?: ApplicationContext): UpdatedSourceSettings {
@@ -58,7 +65,13 @@ function loadSettings(appContext?: ApplicationContext): UpdatedSourceSettings {
             : true,
           followRedirectOtherPages: typeof parsed.followRedirectOtherPages === "boolean" 
             ? parsed.followRedirectOtherPages 
-            : false
+            : false,
+          requestHeaderName: typeof parsed.requestHeaderName === "string"
+            ? parsed.requestHeaderName
+            : DEFAULT_REQUEST_HEADER_NAME,
+          requestHeaderValue: typeof parsed.requestHeaderValue === "string"
+            ? parsed.requestHeaderValue
+            : "",
         };
       }
     }
@@ -689,10 +702,13 @@ export function WebsiteTree({
         const adjustedUrl = applyTrailingSlash(url, s.trailingSlash);
         const isHomePage = pageName.toLowerCase() === "home" || pageName.toLowerCase() === "homepage";
         const followRedirect = isHomePage ? s.followRedirectHomepage : s.followRedirectOtherPages;
+        const headerName = s.requestHeaderName.trim();
+        const headerValue = s.requestHeaderValue.trim();
+        const requestHeader = headerName && headerValue ? { name: headerName, value: headerValue } : undefined;
         const res = await authedFetch("/api/fetch-page", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: adjustedUrl, source: s.source, name: s.name, followRedirect }),
+          body: JSON.stringify({ url: adjustedUrl, source: s.source, name: s.name, followRedirect, requestHeader }),
         });
         const data = await res.json();
         setFetchResults((prev) =>
@@ -1063,17 +1079,74 @@ export function WebsiteTree({
               <div style={{ fontSize: "11px", color: "#aaa", marginTop: "6px" }}>
                 Controls whether URLs should have a trailing slash when fetching pages. Files with extensions are not modified.
               </div>
+              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginTop: "var(--spacing-5)", marginBottom: "var(--spacing-1-5)" }}>
+                Request Header Name
+              </div>
+              <input
+                type="text"
+                value={settings.requestHeaderName}
+                placeholder={DEFAULT_REQUEST_HEADER_NAME}
+                onChange={(e) => {
+                  const next: UpdatedSourceSettings = { ...settings, requestHeaderName: e.target.value };
+                  setSettings(next);
+                  settingsRef.current = next;
+                  saveSettings(next, appContext);
+                }}
+                style={{
+                  width: "100%",
+                  fontSize: "var(--font-size-xs)",
+                  padding: "var(--spacing-1-5) var(--spacing-2-5)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--color-foreground)",
+                  fontFamily: "var(--font-mono)",
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-ring)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border)"; }}
+              />
+              <div style={{ fontSize: "var(--font-size-2xs)", fontWeight: "var(--font-weight-semibold)", textTransform: "uppercase", letterSpacing: "0.6px", color: "var(--color-muted-foreground)", marginTop: "var(--spacing-2-5)", marginBottom: "var(--spacing-1-5)" }}>
+                Request Header Value
+              </div>
+              <input
+                type="password"
+                autoComplete="off"
+                value={settings.requestHeaderValue}
+                onChange={(e) => {
+                  const next: UpdatedSourceSettings = { ...settings, requestHeaderValue: e.target.value };
+                  setSettings(next);
+                  settingsRef.current = next;
+                  saveSettings(next, appContext);
+                }}
+                style={{
+                  width: "100%",
+                  fontSize: "var(--font-size-xs)",
+                  padding: "var(--spacing-1-5) var(--spacing-2-5)",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--color-foreground)",
+                  fontFamily: "var(--font-mono)",
+                  outline: "none",
+                  boxSizing: "border-box",
+                }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = "var(--color-ring)"; }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = "var(--color-border)"; }}
+              />
+              <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-muted-foreground)", marginTop: "var(--spacing-1-5)" }}>
+                Optional header sent with every page check. For a site behind Vercel&apos;s Deployment Protection, keep the name x-vercel-protection-bypass and paste the bypass secret as the value. The header is only sent to the page&apos;s own origin, never to a redirect target on another host. Leave the value empty if the site is not protected.
+              </div>
             </div>
             <div
               style={{
                 textAlign: "left",
                 fontSize: "10px",
-                color: "var(--color-muted-foreground)",
+                color: "#94A3B8",
                 padding: "var(--spacing-3) var(--spacing-5)",
                 borderTop: "1px solid var(--color-border)",
               }}
             >
-              Developed by Roberto Barbedo
+              Developed by Roberto Barbedo · v{process.env.NEXT_PUBLIC_APP_VERSION}
             </div>
           </div>
         </div>
